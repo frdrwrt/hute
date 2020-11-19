@@ -1,0 +1,17 @@
+---
+
+- name: "Check if {{ item.name }} is running"
+  docker_container_info:
+    name: "{{ item.name }}"
+  register: db_state
+
+- name: Ensure state of db container
+  docker_container:
+    name: "{{ item.name }}"
+    state: absent
+  when: db_state.exists
+  
+- name: Setup volumes for spy
+  docker_volume:
+      name: "{{ item.data_store }}" # required. Name of the volume to operate on.
+      state: absent # not required. choices: absent;present. C(absent) deletes the volume.,C(present) creates the volume, if it does not already exist.

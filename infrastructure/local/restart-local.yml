@@ -1,0 +1,21 @@
+---
+- name: start db
+  hosts: localhost
+
+  tasks:
+  - name: Setup network
+    docker_network:
+      name: spy-net
+      state: "{{ spy_net_state | default('present') }}"
+
+  - name: Ensure dbs are pruned
+    include_tasks: ../tasks/db-prune.yml
+    loop: 
+      - { name: 'spy-db', data_store: 'spy-db-datastore'}
+      - { name: 'spy-db-test', data_store: 'spy-db-test-datastore'}
+
+  - name: Ensure dbs are running
+    include_tasks: ../tasks/db.yml
+    loop: 
+      - { name: 'spy-db', port: '25432', db: 'spy', user: 'spy', password: 'spy', data_store: 'spy-db-datastore'}
+      - { name: 'spy-db-test', port: '25433', db: 'spy', user: 'spy', password: 'spy', data_store: 'spy-db-test-datastore'}

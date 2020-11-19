@@ -1,0 +1,14 @@
+node_modules
+.yarn-cache
+logs
+tmp
+temp
+public
+dist
+build
+.cache/
+.pnp.js
+.yarn
+.vscode
+
+sensor

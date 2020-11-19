@@ -1,0 +1,48 @@
+{
+  "name": "spy",
+  "version": "1.0.0",
+  "description": "weather sensors",
+  "main": "index.js",
+  "author": "frdr",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "app",
+    "server"
+  ],
+  "scripts": {
+    "start-server": "yarn --cwd server start",
+    "test-server": "yarn --cwd server test",
+    "lint": "eslint --max-warnings 0 --format friendly .",
+    "lint:fix": "prettier-eslint --write $(pwd)'/**/*.js'",
+    "lint:staged": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "yarn lint:fix",
+      "git add"
+    ],
+    "*.sql": [
+      "node scripts/sql-formatter.js",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "sql-formatter": "^2.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.13.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-formatter-friendly": "^7.0.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^23.20.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^5.0.0",
+    "lint-staged": "^10.5.1",
+    "prettier": "^2.1.2",
+    "prettier-eslint": "^11.0.0",
+    "prettier-eslint-cli": "^5.0.0",
+    "prettier-plugin-svelte": "^1.4.1"
+  }
+}

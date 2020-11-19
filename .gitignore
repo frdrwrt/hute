@@ -1,0 +1,11 @@
+# .env
+
+# yarn
+yarn-error.log
+
+# dependencies
+node_modules/
+
+
+# web-app
+build
