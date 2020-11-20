@@ -1,0 +1,19 @@
+---
+
+- name: (system-upgrades) install unattended upgrades package
+  become: yes
+  apt:
+    name: ['unattended-upgrades', 'apt-listchanges']
+    state: present
+
+- name: (system-upgrades) copy unattended-upgrades configuration files in place
+  become: yes
+  template:
+    src: "../templates/{{ item }}.j2"
+    dest: "/etc/apt/apt.conf.d/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - 02periodic
+    - 50unattended-upgrades

@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+function info() {
+  echo -e "\033[0;33m == $1 == \033[0m"
+}
+function wellDone() {
+  echo -e "\033[0;32m == Done == \033[0m"
+}
+
+function start() {
+  ansible-playbook infrastructure/local/start-db.yml
+  info "Run migrations"
+  yarn run-migrations
+  wellDone
+}
+
+function reset() {
+  ansible-playbook infrastructure/local/reset-db.yml
+  info "Run migrations"
+  yarn run-migrations
+  wellDone
+}
+
+function seed() {
+  yarn --cwd server run-seeds
+}
+
+function deployProduction() {
+  ansible-playbook -i infrastructure/production/inventory infrastructure/production/deploy.yml
+}
+
+function deployLocal() {
+  ansible-playbook infrastructure/local/deploy.yml
+}
+
+
+while [ $# -gt 0 ]; do
+  arg=$1
+  case $arg in
+    start)
+      start
+    ;;
+    reset)
+      reset
+    ;;
+    seed)
+      seed
+    ;;
+    deploy-production)
+      deployProduction
+    ;;
+    deploy-local)
+      deployLocal
+    ;;
+    shortlist)
+      echo option_1 option_2 shortlist
+    ;;
+    *)
+     yarn "$@"
+    ;;
+  esac
+  shift
+done

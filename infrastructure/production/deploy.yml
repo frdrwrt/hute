@@ -1,0 +1,56 @@
+---
+- hosts: localhost
+  connection: local
+
+  tasks:
+    - name: build image
+      include_tasks: ../tasks/build.yml
+      loop:
+        - { name: 'hute-server', dockerfile: 'Dockerfile.server' }
+        - { name: 'hute-app', dockerfile: 'Dockerfile.app' }
+
+- hosts: server
+  vars:
+    - local: no
+    - nginx_conf: '/home/hute/nginx.conf'
+    - certbot_email: webmaster@hute.info
+
+  tasks:
+    - name: Setup network
+      docker_network:
+        name: hute-net
+        state: "{{ hute_net_state | default('present') }}"
+
+    - name: Copy init.sql to remote
+      copy:
+        src: '../../scripts/init.sql'
+        dest: '/home/hute/init.sql'
+
+    - name: Copy files to remote
+      copy:
+        src: '{{ item }}'
+        dest: '/home/hute'
+      with_fileglob:
+        - './files/*'
+
+    - name: Ensure db are running
+      include_tasks: ../tasks/db.yml
+      loop:
+        - {
+            name: 'hute-db',
+            port: '25432',
+            db: 'hute',
+            user: 'hute',
+            password: 'hute',
+            data_store: 'hute-db-datastore',
+            init_sql: '/home/hute/init.sql',
+          }
+
+    - name: Deploy server
+      include_tasks: ../tasks/deploy.yml
+      loop:
+        - { name: 'hute-app', dockerfile: 'Dockerfile.app', port_host: '3000', port_container: '3000' }
+        # - { name: 'hute-server', dockerfile: 'Dockerfile.server', port_host: '4000', port_container: '4000' }
+
+    - name: Ensure nginx is running
+      include_tasks: ../tasks/nginx.yml

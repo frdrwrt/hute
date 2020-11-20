@@ -1,0 +1,73 @@
+---
+- name: ensure old versions of Docker are not installed.
+  become: yes
+  package:
+    name:
+      - docker
+      - docker-engine
+    state: absent
+
+- name: ensure dependencies are installed
+  become: yes
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg2
+      - python-pip
+      - python3-pip
+      - python3-venv
+      - python-docker
+      - python3-docker
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: ensure docker aptkey is present.
+  become: yes
+  apt_key:
+    url: 'https://download.docker.com/linux/debian/gpg'
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    state: present
+  ignore_errors: true
+
+- name: ensure docker repository is present
+  become: yes
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/debian buster stable"
+    state: present
+    update_cache: true
+
+- name: ensure docker is installed
+  become: yes
+  apt:
+    name: ['docker-ce']
+  notify: restart docker
+
+- name: ensure docker is started and enabled
+  become: yes
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: ensure docker users are added to the docker group
+  become: yes
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  with_items: "{{ docker_users }}"
+
+
+  # remote_user: remote_username
+  # become: yes
+  # become_method: sudo
+  # tasks:
+    # - name: Install pip
+      # apt: name=python-pip state=present
+      
+    # - name: install docker-py
+      # pip: name=docker-py
+
+    #https://www.codementor.io/@mamytianarakotomalala/how-to-deploy-docker-container-with-ansible-on-debian-8-mavm48kw0

@@ -1,5 +1,5 @@
 import models from '../models/index.js';
-import db from '../db.js';
+import { db } from '../db.js';
 
 const grabFromDB = async (tableName, whereClause) => {
   const tableQuery = db(tableName);
@@ -9,11 +9,21 @@ const grabFromDB = async (tableName, whereClause) => {
   return tableQuery;
 };
 
+const hasDevice = async (device) => {
+  return (await models.device.insert(device).returning('*'))[0];
+};
+
 const hasDevices = async (devices) => {
   return models.device.insert(devices).returning('*');
 };
 
+const hasRecords = async (records) => {
+  return models.record.insert(records).returning('*');
+};
+
 export default {
   grabFromDB,
+  hasDevice,
   hasDevices,
+  hasRecords,
 };

@@ -1,0 +1,6 @@
+---
+# tasks file for users-groups
+
+- include: sudo.yml
+- include: groups.yml
+- include: users.yml

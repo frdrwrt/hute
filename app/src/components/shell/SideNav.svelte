@@ -1,5 +1,4 @@
 <script>
-  import { Link } from "svelte-routing";
   import {
     SideNav,
     SideNavItems,
@@ -11,11 +10,7 @@
 
 <SideNav bind:isOpen={isSideNavOpen}>
   <SideNavItems>
-    <Link to="/devices">
-    <SideNavLink text="Devices"/>
-    </Link>
-    <Link to="/graphs">
-    <SideNavLink text="Graphs" />
-    </Link>
+    <SideNavLink text="Devices" href="/"/>
+    <SideNavLink text="Create new device" href="/create-device"/>
   </SideNavItems>
 </SideNav>

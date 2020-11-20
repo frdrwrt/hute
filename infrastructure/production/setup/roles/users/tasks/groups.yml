@@ -1,0 +1,9 @@
+---
+
+- name: (groups) create groups
+  become: yes
+  group:
+    name: "{{ item.groupname }}"
+  with_items: "{{ linux_groups }}"
+  when: linux_groups | length > 0
+

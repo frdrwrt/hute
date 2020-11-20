@@ -1,0 +1,10 @@
+---
+- hosts: server
+  vars_files:
+    - vars.yml
+  
+  roles:
+    - users
+    - security
+    # - nginx
+    - docker

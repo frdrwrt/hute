@@ -1,0 +1,50 @@
+---
+- name: (nginx) ensure nginx is at the latest version
+  become: yes
+  apt:
+    name: nginx
+    state: latest
+
+- include: basic-auth.yml
+  when: nginx_basic_auth_username is defined
+
+- name: (nginx) delete /etc/nginx/sites-enabled/
+  become: yes
+  file:
+    path: /etc/nginx/sites-enabled/
+    state: absent
+
+- name: (nginx) create empty /etc/nginx/sites-enabled/
+  become: yes
+  file:
+    path: /etc/nginx/sites-enabled/
+    state: directory
+
+- name: (nginx) copy sites available
+  become: yes
+  copy:
+    src: "{{ item.src }}"
+    dest: "/etc/nginx/sites-available/{{ item.name }}"
+  with_items: "{{ nginx_sites }}"
+  when: nginx_sites | length > 0
+  register: sites_available
+  notify: restart nginx
+
+- name: (nginx) enable sites
+  become: yes
+  file:
+    src: "{{ item.dest }}"
+    dest: "/etc/nginx/sites-enabled/{{ item.item.name }}"
+    state: link
+  with_items: "{{ sites_available.results }}"
+  when: sites_available is defined
+  notify: restart nginx
+
+- name: (nginx) start nginx
+  become: yes
+  service:
+    name: nginx
+    state: restarted
+
+- include: certbot.yml
+  when: nginx_certbot_mail is defined

@@ -1,0 +1,15 @@
+FROM node:14
+
+WORKDIR /usr/src/
+
+COPY ./package*.json .
+COPY ./yarn.lock .
+
+COPY ./server ./server
+COPY .env.prod .env.prod
+
+RUN yarn workspace server install --production
+
+WORKDIR /usr/src/server
+EXPOSE 4000
+CMD ["yarn", "prod"]

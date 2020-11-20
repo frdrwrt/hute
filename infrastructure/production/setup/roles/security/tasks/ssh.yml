@@ -1,0 +1,45 @@
+---
+- name: (ssh) update ssh configuration
+  become: yes
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - regexp: "^PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    - regexp: "^PermitRootLogin"
+      line: "PermitRootLogin no"
+    - regexp: "^Port"
+      line: 'Port {{ ssh_port }}'
+    - regexp: "^AllowUsers"
+      line: "AllowUsers {{ ssh_allow_users }}"
+    - regexp: "^AllowGroups"
+      line: "AllowGroups {{ ssh_allow_groups }}"
+  notify:
+    - restart ssh
+    - change ansible port
+
+- name: (ssh) evaluate fingerprints of known hosts
+  command: "ssh-keyscan -p {{ item.port }} -t rsa {{ item.hostname_or_ip }}"
+  with_items: "{{ ssh_known_hosts }}"
+  register: "fingerprints"
+  when: ssh_known_hosts | length > 0
+
+- name: (ssh) add fingerprints to /etc/ssh/ssh_known_hosts
+  become: yes
+  lineinfile:
+    path: /etc/ssh/ssh_known_hosts
+    create: yes
+    line: "{{ item.stdout }}"
+    regexp: "[{{ item.item.hostname_or_ip }}]"
+  with_items: "{{ fingerprints.results }}"
+  when: ssh_known_hosts | length > 0
+
+- name: (ssh) set login shell to bash
+  become: yes
+  file:
+    src: /bin/bash
+    dest: /bin/sh
+    state: link

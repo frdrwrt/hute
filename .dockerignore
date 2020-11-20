@@ -1,0 +1,17 @@
+.git
+.github
+.husky
+
+.eslint*
+.prettier*
+
+device
+infrastructure
+scripts
+
+node_modules
+*/node_modules
+*/*/node_modules
+
+__sapper__
+

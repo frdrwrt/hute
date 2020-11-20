@@ -1,0 +1,21 @@
+---
+# tasks file for server-security
+
+- name: system upgrade and repository update
+  become: yes
+  apt:
+    update_cache: yes
+    upgrade: dist
+    autoclean: yes
+    autoremove: yes
+
+- name: install useful packages
+  become: yes
+  apt:
+    name: ntp
+
+- include: host.yml
+- include: ssh.yml
+- include: system-upgrades.yml
+- include: ufw.yml
+- include: fail2ban.yml

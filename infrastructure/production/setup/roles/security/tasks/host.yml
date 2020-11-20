@@ -1,0 +1,25 @@
+---
+
+- name: (host) set hostname in /etc/hostname
+  become: yes
+  replace:
+    path: /etc/hostname
+    regexp: '^.*'
+    replace: "{{ hostname }}"
+  when: hostname is defined
+
+- name: (host) set FQDN in /etc/hosts
+  become: yes
+  lineinfile:
+    path: /etc/hosts
+    regexp: '({{ ansible_default_ipv4.address }} | {{ fqdn }})'
+    line: "{{ ansible_default_ipv4.address }} {{ fqdn }} {{ hostname }}"
+  when:
+    - hostname is defined
+    - fqdn is defined
+
+
+
+
+
+

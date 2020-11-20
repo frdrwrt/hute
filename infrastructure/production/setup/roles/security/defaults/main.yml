@@ -1,0 +1,22 @@
+---
+# defaults file for server-security
+
+# ssh
+ssh_port: 22
+ssh_allow_users: ""
+ssh_allow_groups: ""
+ssh_known_hosts: []
+
+# ufw
+ufw_rules:
+  - port: "{{ ssh_port }}"
+    rule: allow
+    proto: tcp
+
+# fail2ban
+fail2ban_bantime: 600
+fail2ban_findtime: 600
+fail2ban_maxretry: 5
+fail2ban_whitelist: ""
+
+

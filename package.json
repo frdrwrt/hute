@@ -1,7 +1,7 @@
 {
-  "name": "spy",
-  "version": "1.0.0",
-  "description": "weather sensors",
+  "name": "hute",
+  "version": "0.1.0-rc",
+  "description": "humidity💦 & temperature🌡 ",
   "main": "index.js",
   "author": "frdr",
   "license": "MIT",
@@ -11,8 +11,10 @@
     "server"
   ],
   "scripts": {
-    "start-server": "yarn --cwd server start",
+    "start-app": "yarn --cwd app yarn prod",
+    "start-server": "yarn --cwd server run-migrations && yarn --cwd server prod",
     "test-server": "yarn --cwd server test",
+    "run-migrations": "yarn --cwd server run-migrations && yarn --cwd server run-migrations-test",
     "lint": "eslint --max-warnings 0 --format friendly .",
     "lint:fix": "prettier-eslint --write $(pwd)'/**/*.js'",
     "lint:staged": "lint-staged"
@@ -28,6 +30,7 @@
     ]
   },
   "dependencies": {
+    "dotenv-cli": "^4.0.0",
     "sql-formatter": "^2.3.3"
   },
   "devDependencies": {

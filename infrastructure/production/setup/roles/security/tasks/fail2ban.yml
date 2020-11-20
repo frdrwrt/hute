@@ -1,0 +1,22 @@
+---
+- name: (fail2ban) install fail2ban
+  become: yes
+  apt:
+    name: fail2ban
+    state: present
+
+- name: (fail2ban) cp tamplate jail.local to host
+  become: yes
+  template:
+    src: ../templates/jail.local
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: (fail2ban) ensure fail2ban is running
+  become: yes
+  service:
+    name: fail2ban
+    state: restarted
+    enabled: yes

@@ -1,41 +1,41 @@
 ---
-- name: Setup volumes for spy
+- name: Setup volumes for hute
   docker_volume:
-      name: "{{ item.data_store }}" # required. Name of the volume to operate on.
-      state: "{{ datastore_state | default('present') }}" # not required. choices: absent;present. C(absent) deletes the volume.,C(present) creates the volume, if it does not already exist.
+    name: '{{ item.data_store }}' # required. Name of the volume to operate on.
+    state: "{{ datastore_state | default('present') }}" # not required. choices: absent;present. C(absent) deletes the volume.,C(present) creates the volume, if it does not already exist.
 
-- name: "Check if {{ item.name }} is running"
+- name: 'Check if {{ item.name }} is running'
   docker_container_info:
-    name: "{{ item.name }}"
+    name: '{{ item.name }}'
   register: db_state
 
 - name: Start and initialize db
   block:
-    - name: "Start {{ item.name }}"
+    - name: 'Start {{ item.name }}'
       docker_container:
-        name: "{{ item.name }}"
+        name: '{{ item.name }}'
         image: timescale/timescaledb:1.7.4-pg12
-        volumes: 
-          - "{{ item.data_store }}:/var/lib/postgresql/data"
-          - "../../scripts/init.sql:/docker-entrypoint-initdb.d/init.sql"
+        volumes:
+          - '{{ item.data_store }}:/var/lib/postgresql/data'
+          - '{{ item.init_sql }}:/docker-entrypoint-initdb.d/init.sql'
           # - "{{ item.postgres_config }}:/etc/postgresql/postgresql.conf"
         networks_cli_compatible: true
         network_mode: default
         networks:
-          - name: spy-net
-        container_default_behavior: "compatibility"
-        published_ports: 
-        - "{{ item.port }}:5432"
+          - name: hute-net
+        container_default_behavior: 'compatibility'
+        published_ports:
+          - '{{ item.port }}:5432'
         env:
-          POSTGRES_DB: "{{ item.db }}"
-          POSTGRES_USER: "{{ item.user }}"
-          POSTGRES_PASSWORD: "{{ item.password }}"
+          POSTGRES_DB: '{{ item.db }}'
+          POSTGRES_USER: '{{ item.user }}'
+          POSTGRES_PASSWORD: '{{ item.password }}'
       register: db_register
 
-    - name: "Wait for {{ item.name }} to accept connections"
+    - name: 'Wait for {{ item.name }} to accept connections'
       wait_for:
         host: '{{ db_register["ansible_facts"]["docker_container"]["NetworkSettings"]["IPAddress"] }}'
-        port: 5432
+        port: '{{ item.port }}'
         state: started
         connect_timeout: 1
         timeout: 30
@@ -46,6 +46,6 @@
 
 - name: Ensure state of db container
   docker_container:
-    name: "{{ item.name }}"
-    state: "{{ item.state }}"
-  when: db_state.exists
+    name: '{{ item.name }}'
+    state: "{{ item.state | default('started') }}"
+    container_default_behavior: 'compatibility'

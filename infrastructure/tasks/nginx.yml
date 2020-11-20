@@ -1,0 +1,46 @@
+---
+- name: Check if nginx is running
+  docker_container_info:
+    name: hute-nginx
+  register: nginx_state
+
+- name: Start nginx without certbot
+  block:
+    - name: Start nginx
+      docker_container:
+        name: hute-nginx
+        image: nginx:latest
+        restart_policy: unless-stopped
+        volumes:
+          - '{{ nginx_conf }}:/etc/nginx/conf.d/default.conf:ro'
+        networks_cli_compatible: true
+        network_mode: default
+        networks:
+          - name: hute-net
+        container_default_behavior: 'compatibility'
+        published_ports:
+          - "{{ nginx_port_http | default('80') }}:80"
+          - "{{ nginx_port_https | default('443') }}:443"
+  when: local and not nginx_state.exists
+
+- name: Start nginx with certbot
+  block:
+    - name: Start nginx with certbot
+      docker_container:
+        name: hute-nginx
+        image: staticfloat/nginx-certbot:latest
+        # restart_policy: unless-stopped
+        volumes:
+          - '{{ nginx_conf }}:/etc/nginx/user.conf.d/default.conf:ro'
+          - /home/hute/letsencrypt:/etc/letsencrypt
+        networks_cli_compatible: true
+        network_mode: default
+        networks:
+          - name: hute-net
+        container_default_behavior: 'compatibility'
+        published_ports:
+          - "{{ nginx_port_http | default('80') }}:80"
+          - "{{ nginx_port_https | default('443') }}:443"
+        env:
+          CERTBOT_EMAIL: '{{ certbot_email }}'
+  when: not local and not nginx_state.exists

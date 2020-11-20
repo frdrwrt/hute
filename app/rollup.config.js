@@ -1,37 +1,129 @@
-import { terser } from 'rollup-plugin-terser';
-import commonjs from '@rollup/plugin-commonjs';
+import path from 'path';
 import resolve from '@rollup/plugin-node-resolve';
-import serve from 'rollup-plugin-serve';
+import replace from '@rollup/plugin-replace';
+import commonjs from '@rollup/plugin-commonjs';
+import url from '@rollup/plugin-url';
 import svelte from 'rollup-plugin-svelte';
-import livereload from 'rollup-plugin-livereload';
-import postcss from 'rollup-plugin-postcss';
+import babel from '@rollup/plugin-babel';
+import { terser } from 'rollup-plugin-terser';
+import config from 'sapper/config/rollup.js';
+import pkg from './package.json';
 
-const PORT = process.env.PORT || 3000;
-const PROD = !process.env.ROLLUP_WATCH;
+const mode = process.env.NODE_ENV;
+const dev = mode === 'development';
+const legacy = !!process.env.SAPPER_LEGACY_BUILD;
+console.log(process.env.NODE_ENV);
+
+const onwarn = (warning, onwarn) =>
+  (warning.code === 'MISSING_EXPORT' && /'preload'/.test(warning.message)) ||
+  (warning.code === 'CIRCULAR_DEPENDENCY' && /[/\\]@sapper[/\\]/.test(warning.message)) ||
+  (warning.code === 'CIRCULAR_DEPENDENCY' && /[/\\]d3.*[/\\]/.test(warning.message)) ||
+  onwarn(warning);
 
 export default {
-  input: 'src/main.js',
-  context: 'window',
-  moduleContext: 'window',
-  output: {
-    sourcemap: !PROD,
-    format: 'iife',
-    name: 'app',
-    file: 'public/build/bundle.js',
+  client: {
+    input: config.client.input(),
+    output: config.client.output(),
+    context: 'window',
+    plugins: [
+      replace({
+        'process.browser': true,
+        'process.env.NODE_ENV': JSON.stringify(mode),
+        'process.env.SERVER_API': JSON.stringify(process.env.SERVER_API),
+      }),
+      svelte({
+        dev,
+        hydratable: true,
+        emitCss: true,
+      }),
+      url({
+        sourceDir: path.resolve(__dirname, 'src/node_modules/images'),
+        publicPath: '/client/',
+      }),
+      resolve({
+        browser: true,
+        dedupe: ['svelte'],
+      }),
+      commonjs(),
+
+      legacy &&
+        babel({
+          extensions: ['.js', '.mjs', '.html', '.svelte'],
+          babelHelpers: 'runtime',
+          exclude: ['node_modules/@babel/**'],
+          presets: [
+            [
+              '@babel/preset-env',
+              {
+                targets: '> 0.25%, not dead',
+              },
+            ],
+          ],
+          plugins: [
+            '@babel/plugin-syntax-dynamic-import',
+            [
+              '@babel/plugin-transform-runtime',
+              {
+                useESModules: true,
+              },
+            ],
+          ],
+        }),
+
+      !dev &&
+        terser({
+          module: true,
+        }),
+    ],
+
+    preserveEntrySignatures: false,
+    onwarn,
   },
-  plugins: [
-    svelte({
-      hydratable: true,
-      dev: !PROD,
-      css: (css) => css.write('bundle.css', !PROD),
-    }),
-    postcss({
-      extract: true,
-    }),
-    resolve({ browser: true, dedupe: ['svelte'] }),
-    commonjs(),
-    !PROD && serve({ contentBase: ['public'], port: PORT }),
-    !PROD && livereload('public'),
-    PROD && terser(),
-  ],
+
+  server: {
+    input: config.server.input(),
+    output: config.server.output(),
+    context: 'window',
+    plugins: [
+      replace({
+        'process.browser': false,
+        'process.env.NODE_ENV': JSON.stringify(mode),
+      }),
+      svelte({
+        generate: 'ssr',
+        hydratable: true,
+        dev,
+      }),
+      url({
+        sourceDir: path.resolve(__dirname, 'src/node_modules/images'),
+        publicPath: '/client/',
+        emitFiles: false, // already emitted by client build
+      }),
+      resolve({
+        dedupe: ['svelte'],
+      }),
+      commonjs(),
+    ],
+    external: Object.keys(pkg.dependencies).concat(require('module').builtinModules),
+
+    preserveEntrySignatures: 'strict',
+    onwarn,
+  },
+
+  serviceworker: {
+    input: config.serviceworker.input(),
+    output: config.serviceworker.output(),
+    plugins: [
+      resolve(),
+      replace({
+        'process.browser': true,
+        'process.env.NODE_ENV': JSON.stringify(mode),
+      }),
+      commonjs(),
+      !dev && terser(),
+    ],
+
+    preserveEntrySignatures: false,
+    onwarn,
+  },
 };

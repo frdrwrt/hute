@@ -1,6 +1,6 @@
 import { createTestClient } from 'apollo-server-testing';
 import knexCleaner from 'knex-cleaner';
-import db from '../db.js';
+import { db } from '../db.js';
 import { apolloServer } from '../server.js';
 import hasData from './hasData';
 

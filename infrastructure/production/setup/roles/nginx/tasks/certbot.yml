@@ -1,0 +1,18 @@
+---
+
+- name: (certbot) ensure packages are installed
+  become: yes
+  apt:
+    name: ['certbot', 'python-certbot-nginx', 'cron']
+
+- name: (certbot) create certificates
+  become: yes
+  shell: "certbot --nginx -n --agree-tos -m {{ nginx_certbot_mail }} -d {{ item }}"
+  with_items: "{{ nginx_certbot_domains }}"
+  when: nginx_certbot_domains | length > 0
+
+
+
+
+
+

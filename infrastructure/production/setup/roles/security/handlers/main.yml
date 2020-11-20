@@ -1,0 +1,11 @@
+---
+# handlers file for server-security
+
+- name: restart ssh
+  become: yes
+  service: name=sshd state=restarted
+
+- name: change ansible port
+  set_fact:
+    ansible_port: '{{ ssh_port }}'
+

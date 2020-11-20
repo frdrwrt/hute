@@ -1,0 +1,6 @@
+---
+# defaults file for users-groups
+
+linux_groups: []
+linux_users: []
+
