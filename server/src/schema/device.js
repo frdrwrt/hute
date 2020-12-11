@@ -1,4 +1,4 @@
-import apollo from 'apollo-server-koa';
+import apollo from 'apollo-server';
 
 export const typeDef = apollo.gql`
   extend type Query {
@@ -8,7 +8,7 @@ export const typeDef = apollo.gql`
   extend type Mutation {
     createDevice(name: String!): Device
     updateDevice(id: ID!, name: String): Device
-    deleteDevice(id: ID!): Device
+    deleteDevice(id: ID!): ID
   }
   type Device {
     id: ID!
@@ -40,6 +40,7 @@ export const resolvers = {
     },
     deleteDevice: async (parent, args, { models }, info) => {
       await models.device.delete(args.id);
+      return args.id;
     },
   },
 };

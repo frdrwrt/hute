@@ -1,4 +1,4 @@
-import apollo from 'apollo-server-koa';
+import apollo from 'apollo-server';
 import graphql from 'graphql';
 import gmr from '@wiicamp/graphql-merge-resolvers';
 import { typeDef as Device, resolvers as deviceResolvers } from './device.js';
@@ -29,7 +29,6 @@ const dateResolvers = {
     },
     parseLiteral(ast) {
       // TODO: understand how we have to handle it here.
-      console.dir('parseLiteral', ast);
       if (ast.kind === graphql.language.Kind.INT) {
         return parseInt(ast.value, 10); // values send from client inline.
       }

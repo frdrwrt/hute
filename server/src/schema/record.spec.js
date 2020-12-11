@@ -176,3 +176,29 @@ it('should create record', async () => {
   const records = await Tester.grabFromDB('records');
   expect(records).toContainEqual({ time: expect.any(String), deviceId, temperature: 12.0, humidity: 60.5 });
 });
+
+it('should delete records for device', async () => {
+  const anotherDevice = await Tester.hasDevice({ name: 'Another Device' });
+  await Tester.hasRecords([
+    { time: '2020-01-01', deviceId },
+    { time: '2020-01-01', deviceId },
+    { time: '2020-01-01', deviceId: anotherDevice.id },
+  ]);
+
+  const result = await Tester.mutate({
+    mutation: `
+  mutation deleteRecordsForDevice($deviceId: ID!)  {
+    deleteRecordsForDevice(deviceId: $deviceId) 
+  } 
+`,
+    variables: { deviceId },
+  });
+
+  expect(result.errors).toBeUndefined();
+
+  const records = await Tester.grabFromDB('records');
+  expect(records).toHaveLength(1);
+  expect(records[0]).toMatchObject({
+    deviceId: anotherDevice.id,
+  });
+});

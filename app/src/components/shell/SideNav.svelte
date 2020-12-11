@@ -1,16 +1,19 @@
 <script>
-  import {
-    SideNav,
-    SideNavItems,
-    SideNavLink,
-  } from "carbon-components-svelte";
+import { SideNav, SideNavItems, SideNavLink } from 'carbon-components-svelte';
 
-  export let isSideNavOpen;
+export let isSideNavOpen;
+export let isMobile;
+const handleSelected = () => {
+  console.log('isMobile', isMobile);
+  if (isMobile) {
+    isSideNavOpen = false;
+  }
+};
 </script>
 
-<SideNav bind:isOpen={isSideNavOpen}>
+<SideNav bind:isOpen="{isSideNavOpen}">
   <SideNavItems>
-    <SideNavLink text="Devices" href="/"/>
-    <SideNavLink text="Create new device" href="/create-device"/>
+    <SideNavLink on:click="{handleSelected}" text="Devices" href="/" />
+    <SideNavLink on:click="{handleSelected}" text="Create new device" href="/device/edit/create" />
   </SideNavItems>
 </SideNav>

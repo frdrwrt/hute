@@ -16,6 +16,9 @@ linux_users:
     ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDX4I04fYVDc5ecc92tf2jF9thxvg/3+zewn35W9Ys9qr0a31inbf4iJOO/KtK3k9qrrXoa5b0g66XXmqvu+Pyu6fHEgBu7/S+IDH+yn/Uru3Ufsq9emFGzLZ4zjudqDRn8SrdXOzKSGahav/VjWOvAFGp0gMkySwr9nMSqzVbyrY52p9j7x1p9gGYNb9QerbYtpepMbD1ALisXAxDmUnraMtlqfRmA1/rPDZccrdYpj7LRWqYA63GMDTYSDEwyxp2tTgNYU75/SMYybu93pQpg27EIxpf9ZaB7zsX67uYvrV/6Kwb8IZNmMvXTzK419rasr4H1W9EbV2yOAl5dI3M5mZsYWryjNbwXfuGTCO+uh148mtNBl5pDWFc58D3golOKVRQRq3BLWkBc3+TswvXbs0WCqQ3CDwh4Kn+gryeGgK6fIQatQb2/SfcXusSI0nlFVPkxneD3h8u8dzj8CHu7Poe7lYPZSK7lXBZtr9pognKH2+s4p8NKNE1eiCPxSjs= hute
 "
   
+docker_users:
+  - hute
+
 ##########################
 # SERVER SECURITY
 ##########################
@@ -31,17 +34,3 @@ ufw_rules:
     rule: allow
     proto: tcp
 
-##########################
-# NGINX
-##########################
-
-nginx_sites:
-  - name: webserver
-    src: "../files/nginx_config"
-
-nginx_certbot_mail: "webmaster@hute.info"
-nginx_certbot_domains: ["hute.info"]
-
-
-docker_users:
-  - hute

@@ -89,13 +89,54 @@ it('should update device', async () => {
 
   const updatedDevice = await Tester.mutate({
     mutation: `
-      mutation updateDevice($id: ID! $name: String) {
-        updateDevice(name: $name) {
+      mutation updateDevice($deviceId: ID! $deviceName: String) {
+        updateDevice(id: $deviceId, name: $deviceName) {
           id, 
           name
         }
       }
     `,
-    variables: { id: device1, name: 'Device updated' },
+    variables: { deviceId: device1.id, deviceName: 'Device updated' },
+  });
+
+  expect(updatedDevice.errors).toBeUndefined();
+
+  expect(updatedDevice.data.updateDevice).toEqual({
+    id: device1.id,
+    name: 'Device updated',
+  });
+
+  const [devicesInDB] = await Tester.grabFromDB('devices', { id: device1.id });
+  expect(devicesInDB).toMatchObject({
+    id: device1.id,
+    name: 'Device updated',
+  });
+
+  const [devicesInDB2] = await Tester.grabFromDB('devices', { id: device2.id });
+  expect(devicesInDB2).toMatchObject({
+    id: device2.id,
+    name: 'Device 2',
+  });
+});
+
+it('should delete device', async () => {
+  const [device1, device2] = await Tester.hasDevices([{ name: 'Device 1' }, { name: 'Device 2' }]);
+  const result = await Tester.mutate({
+    mutation: `
+      mutation deleteDevice($id: ID!) {
+        deleteDevice(id: $id)
+      }
+    `,
+    variables: { id: device1.id },
+  });
+
+  expect(result.errors).toBeUndefined();
+
+  const devicesInDB = await Tester.grabFromDB('devices');
+
+  expect(devicesInDB).toHaveLength(1);
+  expect(devicesInDB[0]).toMatchObject({
+    id: device2.id,
+    name: 'Device 2',
   });
 });

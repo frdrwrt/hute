@@ -50,7 +50,7 @@
       include_tasks: ../tasks/deploy.yml
       loop:
         - { name: 'hute-app', dockerfile: 'Dockerfile.app', port_host: '3000', port_container: '3000' }
-        # - { name: 'hute-server', dockerfile: 'Dockerfile.server', port_host: '4000', port_container: '4000' }
+        - { name: 'hute-server', dockerfile: 'Dockerfile.server', port_host: '4000', port_container: '4000' }
 
     - name: Ensure nginx is running
       include_tasks: ../tasks/nginx.yml

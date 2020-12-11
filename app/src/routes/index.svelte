@@ -1,25 +1,21 @@
 <script>
-import { gql } from '@apollo/client/core';
+import { beforeUpdate, onMount } from 'svelte';
 import { query } from 'svelte-apollo';
 import { goto } from '@sapper/app';
-import { Row, Column, Grid, AspectRatio, Tile, TileGroup, Loading, Button } from 'carbon-components-svelte';
-import Add16 from 'carbon-icons-svelte/lib/Add16';
+import { Row, Column, Grid, AspectRatio, Tile, Loading } from 'carbon-components-svelte';
+import { GET_DEVICES } from '../queries';
 
-const GET_DEVICES = gql`
-  query {
-    devices {
-      name
-      id
-    }
-  }
-`;
 const devices = query(GET_DEVICES);
 
 const handleDeviceClick = async (device) => {
   await goto(`/device/${device.id}`);
 };
-</script>
 
+onMount(async () => {
+  devices.refetch();
+});
+
+</script>
 
 <Grid>
   {#if $devices.loading}

@@ -30,6 +30,9 @@ export default {
         'process.browser': true,
         'process.env.NODE_ENV': JSON.stringify(mode),
         'process.env.SERVER_API': JSON.stringify(process.env.SERVER_API),
+        'process.env.SERVER_API_WS': JSON.stringify(process.env.SERVER_API_WS),
+        'process.env.SSR_SERVER_API': JSON.stringify(process.env.SSR_SERVER_API),
+        'process.env.SSR_SERVER_API_WS': JSON.stringify(process.env.SSR_SERVER_API_WS),
       }),
       svelte({
         dev,
@@ -40,11 +43,11 @@ export default {
         sourceDir: path.resolve(__dirname, 'src/node_modules/images'),
         publicPath: '/client/',
       }),
+      commonjs(),
       resolve({
         browser: true,
         dedupe: ['svelte'],
       }),
-      commonjs(),
 
       legacy &&
         babel({
@@ -99,10 +102,10 @@ export default {
         publicPath: '/client/',
         emitFiles: false, // already emitted by client build
       }),
+      commonjs(),
       resolve({
         dedupe: ['svelte'],
       }),
-      commonjs(),
     ],
     external: Object.keys(pkg.dependencies).concat(require('module').builtinModules),
 
@@ -114,12 +117,12 @@ export default {
     input: config.serviceworker.input(),
     output: config.serviceworker.output(),
     plugins: [
-      resolve(),
       replace({
         'process.browser': true,
         'process.env.NODE_ENV': JSON.stringify(mode),
       }),
       commonjs(),
+      resolve(),
       !dev && terser(),
     ],
 

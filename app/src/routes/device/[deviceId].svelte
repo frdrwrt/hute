@@ -1,3 +1,6 @@
+<style>
+</style>
+
 <script context="module">
 export async function preload({ params }) {
   return { ...params };
@@ -5,73 +8,50 @@ export async function preload({ params }) {
 </script>
 
 <script>
+import { goto } from '@sapper/app';
+import { query, subscribe } from 'svelte-apollo';
 import { onMount } from 'svelte';
-import { gql } from '@apollo/client/core';
-import { query } from 'svelte-apollo';
 import merge from 'lodash.merge';
 import clone from 'lodash.clonedeep';
-import {
-  Row,
-  Column,
-  Grid,
-  ContentSwitcher,
-  Switch,
-  AspectRatio,
-  Tile,
-  TileGroup,
-  Loading,
-  Button,
-  ButtonSet,
-} from 'carbon-components-svelte';
+import { Row, Column, Grid, Loading, Button } from 'carbon-components-svelte';
 import Edit24 from 'carbon-icons-svelte/lib/Edit24';
 import TrashCan24 from 'carbon-icons-svelte/lib/TrashCan24';
 
+import DaySwitcher from '../../components/graphs/DaySwitcher.svelte';
+import { GET_DEVICE, GET_RECORDS, NEW_RECORD } from '../../queries';
+import { daysFromNow } from '../../utils';
+
 let LineChart;
 
-import DaySwitcher from '../../components/graphs/DaySwitcher.svelte';
+export let deviceId;
+
+let deviceStore = query(GET_DEVICE, { variables: { deviceId } });
+let recordsStore = query(GET_RECORDS, { variables: { deviceId, from: daysFromNow(3) } });
 
 onMount(async () => {
+  deviceStore.refetch();
   const module = await import('@carbon/charts-svelte');
   LineChart = module.LineChart;
 });
 
-const daysFromNow = (days) => {
-  const offset = 24 * 60 * 60 * 1000 * days;
-  const date = new Date(Date.now() - offset);
-  return date.toISOString();
-};
-
-export let deviceId;
-
-const RECORDS = gql`
-  query records($deviceId: ID!, $from: Date!) {
-    recordsForDevice(deviceId: $deviceId, from: $from) {
-      time
-      temperature
-      humidity
-      dewPoint
-    }
-  }
-`;
-
-const DEVICE = gql`
-  query device($deviceId: ID!) {
-    device(id: $deviceId) {
-      name
-    }
-  }
-`;
-
-let device = query(DEVICE, { variables: { deviceId } });
-let records = query(RECORDS, { variables: { deviceId, from: daysFromNow(3) } });
-
 const handleDaysSelected = (event) => {
-  records = query(RECORDS, { variables: { deviceId, from: daysFromNow(event.detail) } });
+  recordsStore = query(GET_RECORDS, { variables: { deviceId, from: daysFromNow(event.detail) } });
+  
+  recordsStore.subscribeToMore({
+    document: NEW_RECORD,
+    variables: { deviceId },
+    updateQuery: (prev, { subscriptionData }) => {
+      console.log('New Record: ', subscriptionData.data.newRecord);
+      if (!subscriptionData.data) return prev;
+      return {
+        recordsForDevice: [...prev.recordsForDevice, subscriptionData.data.newRecord],
+      };
+    },
+  });
 };
 
 const addGroup = (records, group, value) => {
   return records.map((record) => {
-    console.log(value, record);
     return {
       group: group,
       time: record.time,
@@ -79,7 +59,6 @@ const addGroup = (records, group, value) => {
     };
   });
 };
-
 
 const baseGraphOptions = {
   axes: {
@@ -131,12 +110,13 @@ const humidityGraphOptions = merge(clone(baseGraphOptions), {
   color: { scale: { Humidity: '#4589ff' } },
 });
 </script>
+
 <Grid>
   <Row>
     <Column>
-      {#if $device.data}
-        <h1>{$device.data.device.name}</h1>
-        <br />
+      {#if $deviceStore.data}
+        <h1>{$deviceStore.data.device.name}</h1>
+        <p style="font-weight: light; font-size: 0.75rem;">ID: {$deviceStore.data.device.id}</p>
         <br />
         <br />
         <br />
@@ -144,22 +124,15 @@ const humidityGraphOptions = merge(clone(baseGraphOptions), {
       {/if}
     </Column>
     <Column style="display:flex; justify-content:flex-end; align-items: flex-start;">
-        <Button
-          hasIconOnly
-          kind="ghost"
-          iconDescription="Edit device"
-          tooltipPosition="bottom"
-          tooltipAlignment="center"
-          icon="{Edit24}"
-        />
-        <Button
-          hasIconOnly
-          kind="danger-ghost"
-          iconDescription="Delete device"
-          tooltipPosition="bottom"
-          tooltipAlignment="center"
-          icon="{TrashCan24}"
-        />
+      <Button
+        hasIconOnly
+        kind="ghost"
+        iconDescription="Edit device"
+        tooltipPosition="bottom"
+        tooltipAlignment="center"
+        href="{`/device/edit/${deviceId}`}"
+        icon="{Edit24}"
+      />
     </Column>
   </Row>
   <Row>
@@ -168,19 +141,19 @@ const humidityGraphOptions = merge(clone(baseGraphOptions), {
       <DaySwitcher on:change="{handleDaysSelected}" />
     </Column>
   </Row>
-  {#if $records.loading}
+  {#if $recordsStore.loading}
     <Column>
       <Loading withOverlay="{false}" small style="margin: auto;" />
     </Column>
-  {:else if $records.error}
+  {:else if $recordsStore.error}
     ERROR:
-    {$records.error}
+    {$recordsStore.error}
   {:else}
     <Row>
       <Column>
         <svelte:component
           this="{LineChart}"
-          data="{[...addGroup($records.data.recordsForDevice, 'Temperature', 'temperature'), ...addGroup($records.data.recordsForDevice, 'Dew Point', 'dewPoint')]}"
+          data="{[...addGroup($recordsStore.data.recordsForDevice, 'Temperature', 'temperature'), ...addGroup($recordsStore.data.recordsForDevice, 'Dew Point', 'dewPoint')]}"
           options="{temperatureGraphOptions}"
         />
       </Column>
@@ -189,7 +162,7 @@ const humidityGraphOptions = merge(clone(baseGraphOptions), {
       <Column>
         <svelte:component
           this="{LineChart}"
-          data="{addGroup($records.data.recordsForDevice, 'Humidity', 'humidity')}"
+          data="{addGroup($recordsStore.data.recordsForDevice, 'Humidity', 'humidity')}"
           options="{humidityGraphOptions}"
         />
       </Column>

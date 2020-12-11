@@ -9,7 +9,6 @@ class Record extends Model {
     super(db, Record.tableName);
   }
 
-  calculate;
   all() {
     return this.db(Record.tableName).select().orderBy('time', 'asc');
   }
@@ -23,6 +22,10 @@ class Record extends Model {
       query.where('time', '<=', to);
     }
     return query;
+  }
+
+  deleteByDeviceId({ deviceId }) {
+    return this.db(Record.tableName).where({ deviceId }).delete();
   }
 }
 export default Record;
