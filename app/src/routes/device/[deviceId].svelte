@@ -19,6 +19,7 @@ import TrashCan24 from 'carbon-icons-svelte/lib/TrashCan24';
 
 import DaySwitcher from '../../components/graphs/DaySwitcher.svelte';
 import { GET_DEVICE, GET_RECORDS, NEW_RECORD } from '../../queries';
+import { isMobile } from '../../stores';
 import { daysFromNow } from '../../utils';
 
 let LineChart;
@@ -136,7 +137,9 @@ const humidityGraphOptions = merge(clone(baseGraphOptions), {
     </Column>
   </Row>
   <Row>
+    {#if !$isMobile}
     <Column />
+    {/if}
     <Column>
       <DaySwitcher on:change="{handleDaysSelected}" />
     </Column>

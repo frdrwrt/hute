@@ -6,7 +6,7 @@ import {
 } from 'carbon-components-svelte';
 
 const dispatch = createEventDispatcher();
-let index=2;
+let index=3;
 
 const onChange = (event) => {
   let days;
@@ -20,8 +20,10 @@ const onChange = (event) => {
     case 2:
       days = 3;
       break;
+    case 3:
+      days = 1;
+      break;
   }
-  console.log(days);
   dispatch('change', days);
 };
 
@@ -32,4 +34,5 @@ const onChange = (event) => {
   <Switch text="30 days" />
   <Switch text="7 days" />
   <Switch text="3 days" />
+  <Switch text="24h" />
 </ContentSwitcher>

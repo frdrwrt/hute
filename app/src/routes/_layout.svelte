@@ -22,20 +22,21 @@ import SideNav from '../components/shell/SideNav.svelte';
 import Header from '../components/shell/Header.svelte';
 import { Content } from 'carbon-components-svelte';
 import { startApolloConnection } from '../connection.js';
+import { isMobile } from '../stores';
 
 startApolloConnection();
 
 let width;
 let height;
 
-$: isMobile = width < 1056;
+$: {isMobile.set(width < 1056)};
 
 let isSideNavOpen = false;
 </script>
 
 <svelte:window bind:innerWidth="{width}" bind:innerHeight="{height}" />
 <Header bind:isSideNavOpen />
-<SideNav bind:isSideNavOpen bind:isMobile />
+<SideNav bind:isSideNavOpen />
 
 <Content style="background: none; padding: 1rem">
   <slot />

@@ -1,11 +1,12 @@
 <script>
 import { SideNav, SideNavItems, SideNavLink } from 'carbon-components-svelte';
+import { isMobile } from '../../stores';
 
 export let isSideNavOpen;
-export let isMobile;
+
 const handleSelected = () => {
-  console.log('isMobile', isMobile);
-  if (isMobile) {
+  console.log('isMobile', $isMobile);
+  if ($isMobile) {
     isSideNavOpen = false;
   }
 };
