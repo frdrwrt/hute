@@ -17,6 +17,11 @@
 }
 </style>
 
+<svelte:head>
+  <title>HUTE</title>
+</svelte:head>
+
+
 <script>
 import SideNav from '../components/shell/SideNav.svelte';
 import Header from '../components/shell/Header.svelte';
