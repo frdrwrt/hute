@@ -12,8 +12,20 @@ jobs:
   test-server:
     runs-on: ubuntu-latest
 
-    container:
-      image: hute/ci-base:latest
+    # container:
+      # image: hute/ci-base:latest
+
+    # services: 
+      # postgres:
+        # image: timescale/timescaledb:1.7.4-pg12
+        # env: 
+          # POSTGRES_DB: hute
+          # POSTGRES_PASSWORD: hute
+          # POSTGRES_USER: hute
+        # ports:
+        # - 25433:5433
+        # options: -v ${{ github.workspace }}--health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
 
     steps:
       - name: Checkout repository
@@ -23,5 +35,13 @@ jobs:
         # id: hello
         # with: 
           # who-to-greet: 'Hute'
+      - name: Install dependencies
+        run: yarn
+      - name: Ensure test db is running
+        run: ansible-playbook infrastructure/local/start-test-db.yml
+      - name: show containers
+        run: docker ps -a
+      - name: Run migrations
+        run: yarn --cwd server run-migrations-test
       - name: Run tests
-        run: ./hute start-test --ci
+        run: yarn --cwd server test

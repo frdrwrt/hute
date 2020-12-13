@@ -41,6 +41,7 @@ function startTest() {
   fi
   info "Ensure test db is running"
   ansible-playbook infrastructure/local/start-test-db.yml
+  docker ps -a
   info "Run migrations"
   yarn --cwd server run-migrations-test
   info "Run tests"
