@@ -49,6 +49,10 @@ jobs:
         run: docker network connect hute-net hute-db-test
       - name: show network of job
         run: docker network inspect hute-net
+      - name: show containers
+        run: docker ps -a
+      - name: show ip
+        run: docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' hute-db-test
       - name: Run migrations
         run: yarn --cwd server run-migrations-test
       - name: Run tests
