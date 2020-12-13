@@ -1,5 +1,4 @@
 #!/bin/sh -l
-set -euo pipefail
-
+set -eu 
 ./hute install
 ./hute server-tests
