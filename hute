@@ -8,6 +8,19 @@ function info() {
 function wellDone() {
   echo -e "\033[0;32m == Done == \033[0m"
 }
+function fail() {
+  echo -e "\033[0;31m == ERROR == \n $1 \033[0m"
+  exit 1
+}
+
+function installSetup () {
+  regex="^(Python 3.*)"
+  if [[ ! $(python -V 2>&1) =~ $regex ]]; then fail "Python version needs to be 3.x"; fi
+  pip install ansible
+  pip install docker
+  bash <(curl -s https://deb.nodesource.com/setup_14.x)
+  apt install nodejs build-essentials
+}
 
 function start() {
   ansible-playbook infrastructure/local/start-db.yml
@@ -46,6 +59,9 @@ function deployLocal() {
 while [ $# -gt 0 ]; do
   arg=$1
   case $arg in
+    install)
+      installSetup
+    ;;
     start)
       start
     ;;
