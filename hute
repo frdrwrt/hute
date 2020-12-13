@@ -13,6 +13,14 @@ function fail() {
   exit 1
 }
 
+function publishCIBase() {
+  info "Build image"
+  docker build --tag hute/ci-base:latest --file .github/actions/Dockerfile.ci-base .
+  info "Push image to docker hub"
+  docker push hute/ci-base:latest
+  wellDone 
+}
+
 function checkRequirements () {
   regex="^(Python 3.*)"
   if [[ ! $(python -V 2>&1) =~ $regex ]]; then fail "Python version needs to be 3.x"; fi
@@ -55,6 +63,9 @@ function deployLocal() {
 while [ $# -gt 0 ]; do
   arg=$1
   case $arg in
+    publish-cibase)
+      publishCIBase
+    ;;
     start)
       start
     ;;
