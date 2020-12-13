@@ -54,7 +54,7 @@ jobs:
       - name: show containers
         run: docker ps -a
       - name: logs hute-db
-        run: docker logs hute-db-tests
+        run: docker logs hute-db-test
       - name: show ip
         run: docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' hute-db-test
       - name: Run migrations
