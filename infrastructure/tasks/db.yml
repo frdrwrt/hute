@@ -33,15 +33,11 @@
       register: db_register
 
     - name: 'Wait for {{ item.name }} to accept connections'
-      wait_for:
-        host: '{{ db_register["ansible_facts"]["docker_container"]["NetworkSettings"]["IPAddress"] }}'
-        port: '{{ item.port }}'
-        state: started
-        connect_timeout: 1
-        timeout: 30
+      shell: "pg_isready -d {{ item.db }} -p {{ item.port }} -h localhost"
       register: db_running
-      until: db_running is success
+      until: db_running.rc == 0
       retries: 10
+      delay: 1
   when: not db_state.exists
 
 - name: Ensure state of db container
