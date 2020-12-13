@@ -1,4 +1,7 @@
 export const up = async function (knex) {
+  await knex.schema.raw(
+    'CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;CREATE EXTENSION IF NOT EXISTS "uuid-ossp";',
+  );
   const devices = knex.schema.createTable('devices', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
 
