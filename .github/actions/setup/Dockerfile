@@ -1,6 +1,6 @@
 FROM python:buster
 
-RUN echo $PATH
+RUN echo $PWD
 RUN ls
 
 RUN ./hute install
