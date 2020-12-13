@@ -1,3 +1,5 @@
+#https://github.github.io/actions-cheat-sheet/actions-cheat-sheet.pdf
+
 name: Test feature branch
 
 on:
@@ -51,6 +53,8 @@ jobs:
         run: docker network inspect hute-net
       - name: show containers
         run: docker ps -a
+      - name: logs hute-db
+        run: docker logs hute-db-tests
       - name: show ip
         run: docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' hute-db-test
       - name: Run migrations
