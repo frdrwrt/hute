@@ -43,10 +43,10 @@ jobs:
         run: docker ps -a
       - name: show containers
         run: docker network ls
-      - name: show network of job
-        run: docker network inspect ${{ job.container.network }}
       - name: connect to network
         run: docker network connect ${{ job.container.network }} hute-db-test
+      - name: show network of job
+        run: docker network inspect ${{ job.container.network }}
       - name: Run migrations
         run: yarn --cwd server run-migrations-test
       - name: Run tests
