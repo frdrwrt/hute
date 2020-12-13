@@ -50,7 +50,7 @@ jobs:
       - name: connect to network
         run: docker network connect hute-net hute-db-test
       - name: restart
-        run: docker container hute-db-test start
+        run: docker container start hute-db-test
       - name: show network of job
         run: docker network inspect hute-net
       - name: show containers
