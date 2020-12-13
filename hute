@@ -34,9 +34,17 @@ function start() {
 }
 
 function startTest() {
+  if [[ "$*" == *--ci* ]]
+  then
+    info "Install dependencies"
+    yarn 
+  fi
+  info "Ensure test db is running"
   ansible-playbook infrastructure/local/start-test-db.yml
   info "Run migrations"
   yarn --cwd server run-migrations-test
+  info "Run tests"
+  yarn --cwd server test
   wellDone
 }
 
@@ -70,7 +78,8 @@ while [ $# -gt 0 ]; do
       start
     ;;
     start-test)
-      startTest
+      shift
+      startTest "$@"
     ;;
     reset)
       reset
