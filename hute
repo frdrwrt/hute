@@ -19,7 +19,9 @@ function installSetup () {
   pip install ansible
   pip install docker
   bash <(curl -s https://deb.nodesource.com/setup_14.x)
-  apt install nodejs build-essentials
+  curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+  echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+  apt update && apt install nodejs build-essentials yarn
 }
 
 function start() {

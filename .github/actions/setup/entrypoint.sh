@@ -1,6 +1,5 @@
 #!/bin/sh -l
-echo $pwd 
-ls
+set -euo pipefail
 
 ./hute install
 ./hute server-tests
