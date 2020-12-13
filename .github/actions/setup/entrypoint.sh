@@ -1,4 +1,5 @@
 #!/bin/sh -l
 set -eu 
 ./hute install
-./hute server-tests
+./hute start-test
+./hute test-server
