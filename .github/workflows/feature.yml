@@ -12,13 +12,16 @@ jobs:
   test-server:
     runs-on: ubuntu-latest
 
+    container:
+      image: hute/ci-base:latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Execute action 
-        uses: ./.github/actions/setup
-        id: hello
-        with: 
-          who-to-greet: 'Hute'
-      - name: Get output
-        run: echo "THe time was ${{ steps.hello.outputs.time }}"
+      # - name: Execute action 
+        # uses: ./.github/actions/setup
+        # id: hello
+        # with: 
+          # who-to-greet: 'Hute'
+      - name: Run tests
+        run: ./hute start-test --ci
