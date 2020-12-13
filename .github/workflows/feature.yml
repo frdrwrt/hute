@@ -49,6 +49,8 @@ jobs:
         run: docker network connect hute-net ${{ job.container.id }}
       - name: connect to network
         run: docker network connect hute-net hute-db-test
+      - name: restart
+        run: docker container hute-db-test start
       - name: show network of job
         run: docker network inspect hute-net
       - name: show containers
