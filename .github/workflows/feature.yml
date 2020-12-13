@@ -41,6 +41,8 @@ jobs:
         run: ansible-playbook infrastructure/local/start-test-db.yml
       - name: show containers
         run: docker ps -a
+      - name: show containers
+        run: docker network ls
       - name: Run migrations
         run: yarn --cwd server run-migrations-test
       - name: Run tests
