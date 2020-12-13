@@ -1,0 +1,19 @@
+FROM python:buster
+
+SHELL ["/bin/bash", "-c"]
+
+RUN pip install ansible
+RUN pip install docker
+
+# node 
+RUN bash <(curl -s https://deb.nodesource.com/setup_14.x)
+
+# yarn
+RUN curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+# pg 
+RUN curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
+
+RUN apt-get update && apt-get install -y nodejs build-essential yarn postgresql-client-12
