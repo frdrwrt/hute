@@ -8,17 +8,17 @@ on:
 
   workflow_dispatch:
 
-  jobs: 
-    test-server:
-      runs-on: ubuntu-latest
+jobs: 
+  test-server:
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v2
-        - name: Execute action 
-          uses: ./.github/actions
-          id: hello
-          with: 
-            who-to-greet: 'Hute'
-        - name: Get output
-          run: echo "THe time was ${{ steps.hello.outputs.time }}"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Execute action 
+        uses: ./.github/actions
+        id: hello
+        with: 
+          who-to-greet: 'Hute'
+      - name: Get output
+        run: echo "THe time was ${{ steps.hello.outputs.time }}"
