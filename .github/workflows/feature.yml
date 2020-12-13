@@ -43,6 +43,8 @@ jobs:
         run: docker ps -a
       - name: show containers
         run: docker network ls
+      - name: show network of job
+        run: echo "${{ job.services.network }}"
       - name: Run migrations
         run: yarn --cwd server run-migrations-test
       - name: Run tests
