@@ -44,9 +44,9 @@ jobs:
       - name: show containers
         run: docker network ls
       - name: connect to network
-        run: docker network connect ${{ job.container.network }} hute-db-test
+        run: docker network connect ${{ job.container.id }} hute-net
       - name: show network of job
-        run: docker network inspect ${{ job.container.network }}
+        run: docker network inspect hute-net
       - name: Run migrations
         run: yarn --cwd server run-migrations-test
       - name: Run tests
