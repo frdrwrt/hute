@@ -39,15 +39,19 @@
 
     - name: Print infos about container
       debug:
-        var: container_info.container
+        var: container_info.container.NetworkSettings.IPAddress
       when: container_info.exists
 
-    - name: 'Wait for {{ item.name }} to accept connections'
-      shell: "pg_isready -d {{ item.db }} -p {{ item.port }} -h 0.0.0.0"
-      register: db_running
-      until: db_running.rc == 0
-      retries: 10
-      delay: 3
+    - name: Print infos about container
+      debug:
+        var: db_register
+
+    # - name: 'Wait for {{ item.name }} to accept connections'
+      # shell: "pg_isready -d {{ item.db }} -p {{ item.port }} -h localhost"
+      # register: db_running
+      # until: db_running.rc == 0
+      # retries: 10
+      # delay: 3
   when: not db_state.exists
 
 - name: Ensure state of db container
