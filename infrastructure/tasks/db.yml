@@ -4,7 +4,7 @@
     name: '{{ item.data_store }}' # required. Name of the volume to operate on.
     state: "{{ datastore_state | default('present') }}" # not required. choices: absent;present. C(absent) deletes the volume.,C(present) creates the volume, if it does not already exist.
 
-- name: 'Check if {{ item.name }} is running'
+- name: 'Check if {{ item.name }} is already running'
   docker_container_info:
     name: '{{ item.name }}'
   register: db_state
@@ -32,12 +32,22 @@
           POSTGRES_PASSWORD: '{{ item.password }}'
       register: db_register
 
+    - name: Get infos about container
+      docker_container_info: 
+        name: "{{ item.name }}"
+      register: container_info
+
+    - name: Print infos about container
+      debug:
+        var: container_info.container
+      when: container_info.exists
+
     - name: 'Wait for {{ item.name }} to accept connections'
-      shell: "pg_isready -d {{ item.db }} -p {{ item.port }} -h localhost"
+      shell: "pg_isready -d {{ item.db }} -p {{ item.port }} -h 0.0.0.0"
       register: db_running
       until: db_running.rc == 0
       retries: 10
-      delay: 1
+      delay: 3
   when: not db_state.exists
 
 - name: Ensure state of db container
