@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Execute action 
-        uses: ./.github/actions
+        uses: ./.github/actions/setup
         id: hello
         with: 
           who-to-greet: 'Hute'

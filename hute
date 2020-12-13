@@ -16,6 +16,13 @@ function start() {
   wellDone
 }
 
+function startTest() {
+  ansible-playbook infrastructure/local/start-test-db.yml
+  info "Run migrations"
+  yarn --cwd server run-migrations-test
+  wellDone
+}
+
 function reset() {
   ansible-playbook infrastructure/local/reset-db.yml
   info "Run migrations"
@@ -41,6 +48,9 @@ while [ $# -gt 0 ]; do
   case $arg in
     start)
       start
+    ;;
+    start-test)
+      startTest
     ;;
     reset)
       reset
