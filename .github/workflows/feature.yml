@@ -12,8 +12,8 @@ jobs:
   test-server:
     runs-on: ubuntu-latest
 
-    # container:
-      # image: hute/ci-base:latest
+    container:
+      image: hute/ci-base:latest
 
     # services: 
       # postgres:
