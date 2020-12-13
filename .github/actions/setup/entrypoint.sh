@@ -1,7 +1,6 @@
 #!/bin/sh -l
+echo $pwd 
+ls
 
-echo "Hello $1"
-time=$(date)
-echo "::set-output name=time::$time"
-
-ansible --version
+./hute install
+./hute server-tests
