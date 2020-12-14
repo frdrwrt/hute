@@ -21,12 +21,10 @@
   },
   "lint-staged": {
     "*.js": [
-      "yarn lint:fix",
-      "git add"
+      "yarn lint:fix"
     ],
     "*.sql": [
-      "node scripts/sql-formatter.js",
-      "git add"
+      "node scripts/sql-formatter.js"
     ]
   },
   "dependencies": {
