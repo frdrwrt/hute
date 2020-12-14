@@ -21,7 +21,9 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Run linter
-        run: yarn lint:fix
+        run: yarn lint
+      - name: Run formatter
+        run: yarn format
 
   test-server:
     runs-on: ubuntu-latest
