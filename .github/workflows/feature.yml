@@ -96,5 +96,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Setup ssh connection
+        uses: webfactory/ssh-agent@v0.4.1
+        with: 
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Deploy production
         run: ./hute deploy-production

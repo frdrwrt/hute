@@ -17,7 +17,7 @@
         image: timescale/timescaledb:1.7.4-pg12
         volumes:
           - '{{ item.data_store }}:/var/lib/postgresql/data'
-          - '{{ item.init_sql }}:/docker-entrypoint-initdb.d/init.sql'
+          # - '{{ item.init_sql }}:/docker-entrypoint-initdb.d/init.sql'
           # - "{{ item.postgres_config }}:/etc/postgresql/postgresql.conf"
         networks_cli_compatible: true
         network_mode: default

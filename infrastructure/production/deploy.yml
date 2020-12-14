@@ -11,10 +11,10 @@
         name: hute-net
         state: "{{ hute_net_state | default('present') }}"
 
-    - name: Copy init.sql to remote
-      copy:
-        src: '../../scripts/init.sql'
-        dest: '/home/hute/init.sql'
+    # - name: Copy init.sql to remote
+      # copy:
+        # src: '../../scripts/init.sql'
+        # dest: '/home/hute/init.sql'
 
     - name: Copy files to remote
       copy:

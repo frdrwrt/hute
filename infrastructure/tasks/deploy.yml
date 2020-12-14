@@ -11,11 +11,6 @@
     container_default_behavior: 'compatibility'
   when: 'container_state.exists'
 
-- name: 'Remove old image'
-  docker_image:
-    name: 'hute/{{ item.name }}:latest'
-    state: absent
-
 - name: 'Pull image'
   docker_image:
     name: "{{ item.image }}"
@@ -24,8 +19,8 @@
 
 - name: 'Run container'
   docker_container:
-    name: '{{ item.image }}'
-    image: 'hute/{{ item.name }}:latest'
+    name: '{{ item.name }}'
+    image: '{{ item.image }}'
     networks_cli_compatible: true
     network_mode: default
     networks:
