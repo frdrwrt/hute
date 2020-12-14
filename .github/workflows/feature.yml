@@ -45,8 +45,6 @@ jobs:
     
   build-app:
     runs-on: ubuntu-latest
-    container: 
-      image: hute/ci-base:latest
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -87,3 +85,16 @@ jobs:
           push: true
           file: ./Dockerfile.server
           tags: hute/hute-server:latest
+
+  deploy:
+    needs: 
+      - build-server
+      - build-app
+    runs-on: ubuntu-latest
+    container:
+      image: hute/ci-base:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Deploy production
+        run: ./hute deploy-production
