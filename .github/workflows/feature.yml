@@ -45,42 +45,42 @@ jobs:
       - name: Run tests
         run: yarn --cwd server testci
     
-    build-app:
-      run-on: ubuntu-latest
+  build-app:
+    run-on: ubuntu-latest
 
-      container: 
-        image: hute/ci-base:latest
+    container: 
+      image: hute/ci-base:latest
 
-      steps: 
-        - name: Login to docker hub
-          uses: docker/login-action@v1
-          with: 
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
-        - name: Build server image and push to docker hub
-          id: docker_build
-          uses: docker/build-and-push-action@v2
-          with:
-            push: true
-            file: ./Dockerfile.app
-            tags: hute/hute-app:latest
+    steps: 
+      - name: Login to docker hub
+        uses: docker/login-action@v1
+        with: 
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build server image and push to docker hub
+        id: docker_build
+        uses: docker/build-and-push-action@v2
+        with:
+          push: true
+          file: ./Dockerfile.app
+          tags: hute/hute-app:latest
 
-    build-server:
-      run-on: ubuntu-latest
+  build-server:
+    run-on: ubuntu-latest
 
-      container: 
-        image: hute/ci-base:latest
+    container: 
+      image: hute/ci-base:latest
 
-      steps: 
-        - name: Login to docker hub
-          uses: docker/login-action@v1
-          with: 
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
-        - name: Build server image and push to docker hub
-          id: docker_build
-          uses: docker/build-and-push-action@v2
-          with:
-            push: true
-            file: ./Dockerfile.server
-            tags: hute/hute-server:latest
+    steps: 
+      - name: Login to docker hub
+        uses: docker/login-action@v1
+        with: 
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build server image and push to docker hub
+        id: docker_build
+        uses: docker/build-and-push-action@v2
+        with:
+          push: true
+          file: ./Dockerfile.server
+          tags: hute/hute-server:latest
