@@ -30,6 +30,9 @@ pg.types.setTypeParser(pg.types.builtins.TIMESTAMPTZ, (value) => {
   return new Date(value).toISOString();
 });
 
+console.log(process.env.DB_HOST);
+console.log(process.env.DB_PORT);
+
 const knexConfig = {
   client: 'pg',
   connection: {
