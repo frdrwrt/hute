@@ -41,6 +41,6 @@ jobs:
       # - name: show ip
         # run: docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' hute-db-test
       - name: Run migrations
-        run: yarn --cwd server run-migrations-test-ci
+        run: yarn --cwd server run-migrations-testci
       - name: Run tests
-        run: yarn --cwd server test-ci
+        run: yarn --cwd server testci

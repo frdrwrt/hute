@@ -15,7 +15,7 @@ function fail() {
 
 function publishCIBase() {
   info "Build image"
-  docker build --tag hute/ci-base:latest --file .github/actions/Dockerfile.ci-base .
+  docker build --tag hute/ci-base:latest --file Dockerfile.ci-base .
   info "Push image to docker hub"
   docker push hute/ci-base:latest
   wellDone 
