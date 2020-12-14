@@ -1,5 +1,5 @@
-import apollo from 'apollo-server';
-import { pubsub } from '../server.js';
+import apollo from 'apollo-server-express';
+import { pubsub } from '../db.js';
 import { calculateDewPoint } from '../utils/calculations.js';
 
 export const typeDef = apollo.gql`

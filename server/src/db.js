@@ -1,6 +1,9 @@
 import Knex from 'knex';
 import knexStringCase from 'knex-stringcase';
+import apollo from 'apollo-server-express';
 import pg from 'pg';
+
+export const pubsub = new apollo.PubSub();
 
 pg.types.setTypeParser(pg.types.builtins.INT8, (value) => {
   return parseInt(value);
@@ -46,8 +49,6 @@ const knexConfig = {
     directory: '../../.seeds',
   },
 };
-
-console.log(knexConfig);
 
 const kenxConfigModified = knexStringCase(knexConfig);
 

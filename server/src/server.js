@@ -1,37 +1,33 @@
 import http from 'http';
 import express from 'express';
-import apollo from 'apollo-server-express';
-import schema from './schema/index.js';
-import models from './models/index.js';
+import { ApolloServer } from 'apollo-server-express';
+import { pubsub } from './db';
+import schema from './schema';
+import models from './models';
 
-const { PubSub, ApolloServer } = apollo;
+const PORT = process.env.SERVER_PORT;
 
-export const pubsub = new PubSub();
-
+const expressServer = express();
+export const apolloServer = new ApolloServer({
+  path: '/api',
+  schema,
+  context: async () => ({ models, pubsub }),
+  introspection: true,
+  playground: {
+    endpoint: `http://localhost:${PORT}/graphql`,
+    subscriptionEndpoint: '/subscriptions',
+  },
+  subscriptions: {
+    path: '/subscriptions',
+  },
+});
 export const startServer = async () => {
-  const expressServer = express();
-
-  const apolloServer = new ApolloServer({
-    path: '/api',
-    schema,
-    context: async () => ({ models, pubsub }),
-    introspection: true,
-    playground: {
-      endpoint: 'http://localhost:4000/graphql',
-      subscriptionEndpoint: '/subscriptions',
-    },
-    subscriptions: {
-      path: '/subscriptions',
-    },
-  });
-
   apolloServer.applyMiddleware({ app: expressServer });
 
   const httpServer = http.createServer(expressServer);
 
   apolloServer.installSubscriptionHandlers(httpServer);
 
-  const PORT = process.env.SERVER_PORT;
   httpServer.listen(PORT, () => {
     console.log(`🚀 Server ready at http://localhost:${PORT}${apolloServer.graphqlPath}`);
     console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${apolloServer.subscriptionsPath}`);

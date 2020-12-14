@@ -1,4 +1,4 @@
-import apollo from 'apollo-server';
+import apollo from 'apollo-server-express';
 import graphql from 'graphql';
 import gmr from '@wiicamp/graphql-merge-resolvers';
 import { typeDef as Device, resolvers as deviceResolvers } from './device.js';
