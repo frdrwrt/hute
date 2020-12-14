@@ -11,6 +11,18 @@ on:
   workflow_dispatch:
 
 jobs: 
+  codestyle:
+    runs-on: ubuntu-latest
+    container: 
+      image: hute/ci-base:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn
+      - name: Run linter
+        run: yarn lint:fix
+
   test-server:
     runs-on: ubuntu-latest
     container:
@@ -44,6 +56,8 @@ jobs:
         run: yarn --cwd server testci
     
   build-app:
+    needs:
+      - codestyle
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout repository
@@ -65,7 +79,9 @@ jobs:
           tags: hute/hute-app:latest
 
   build-server:
-    needs: test-server
+    needs: 
+      - test-server
+      - codestyle
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout repository

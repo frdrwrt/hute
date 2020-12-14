@@ -1,4 +1,4 @@
-export const up = async function (knex) {
+export const up = async (knex) => {
   await knex.schema.raw(
     'CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;CREATE EXTENSION IF NOT EXISTS "uuid-ossp";',
   );
@@ -31,5 +31,3 @@ export const up = async function (knex) {
 
   await knex.schema.raw("SELECT create_hypertable('records', 'time');");
 };
-
-export const down = function (knex) {};

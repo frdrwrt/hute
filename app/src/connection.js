@@ -29,9 +29,7 @@ export const startApolloConnection = () => {
 
   const errorLink = onError(({ networkError, graphQLErrors }) => {
     if (graphQLErrors) {
-      graphQLErrors.map((err) => {
-        console.warn(err.message);
-      });
+      graphQLErrors.map((err) => console.warn(err.message));
     }
     if (networkError) {
       console.warn(networkError);
