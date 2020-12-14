@@ -22,22 +22,22 @@ jobs:
         run: yarn
       - name: Ensure test db is running
         run: ansible-playbook infrastructure/local/start-test-db.yml
-      # - name: show containers
-        # run: docker ps -a
-      # - name: show networks
-        # run: docker network ls
+      - name: show containers
+        run: docker ps -a
+      - name: show networks
+        run: docker network ls
       - name: connect to network
         run: docker network connect hute-net ${{ job.container.id }}
       - name: restart
         run: docker container start hute-db-test
-      # - name: show network of job
-        # run: docker network inspect hute-net
-      # - name: show containers
-        # run: docker ps -a
-      # - name: logs hute-db
-        # run: docker logs hute-db-test
-      # - name: show ip
-        # run: docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' hute-db-test
+      - name: show network of job
+        run: docker network inspect hute-net
+      - name: show containers
+        run: docker ps -a
+      - name: logs hute-db
+        run: docker logs hute-db-test
+      - name: show ip
+        run: docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' hute-db-test
       - name: Run migrations
         run: yarn --cwd server run-migrations-testci
       - name: Run tests
@@ -50,6 +50,9 @@ jobs:
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Docker build context 
+        id: buildx
+        uses: docker/setup-buildx-action@v1
       - name: Login to docker hub
         uses: docker/login-action@v1
         with: 
@@ -66,11 +69,12 @@ jobs:
   build-server:
     needs: test-server
     runs-on: ubuntu-latest
-    container: 
-      image: hute/ci-base:latest
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Docker build context 
+        id: buildx
+        uses: docker/setup-buildx-action@v1
       - name: Login to docker hub
         uses: docker/login-action@v1
         with: 
