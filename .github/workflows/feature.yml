@@ -17,46 +17,29 @@ jobs:
     container:
       image: hute/ci-base:latest
 
-    # services: 
-      # postgres:
-        # image: timescale/timescaledb:1.7.4-pg12
-        # env: 
-          # POSTGRES_DB: hute
-          # POSTGRES_PASSWORD: hute
-          # POSTGRES_USER: hute
-        # ports:
-        # - 25433:5433
-        # options: -v ${{ github.workspace }}--health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      # - name: Execute action 
-        # uses: ./.github/actions/setup
-        # id: hello
-        # with: 
-          # who-to-greet: 'Hute'
       - name: Install dependencies
         run: yarn
       - name: Ensure test db is running
         run: ansible-playbook infrastructure/local/start-test-db.yml
-      - name: show containers
-        run: docker ps -a
-      - name: show networks
-        run: docker network ls
+      # - name: show containers
+        # run: docker ps -a
+      # - name: show networks
+        # run: docker network ls
       - name: connect to network
         run: docker network connect hute-net ${{ job.container.id }}
       - name: restart
         run: docker container start hute-db-test
-      - name: show network of job
-        run: docker network inspect hute-net
-      - name: show containers
-        run: docker ps -a
-      - name: logs hute-db
-        run: docker logs hute-db-test
-      - name: show ip
-        run: docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' hute-db-test
+      # - name: show network of job
+        # run: docker network inspect hute-net
+      # - name: show containers
+        # run: docker ps -a
+      # - name: logs hute-db
+        # run: docker logs hute-db-test
+      # - name: show ip
+        # run: docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' hute-db-test
       - name: Run migrations
         run: yarn --cwd server run-migrations-test-ci
       - name: Run tests

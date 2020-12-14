@@ -1,14 +1,14 @@
 import http from 'http';
 import express from 'express';
-import { ApolloServer } from 'apollo-server-express';
-import { pubsub } from './db';
-import schema from './schema';
-import models from './models';
+import apollo from 'apollo-server-express';
+import { pubsub } from './sub.js';
+import schema from './schema/index.js';
+import models from './models/index.js';
 
 const PORT = process.env.SERVER_PORT;
 
 const expressServer = express();
-export const apolloServer = new ApolloServer({
+export const apolloServer = new apollo.ApolloServer({
   path: '/api',
   schema,
   context: async () => ({ models, pubsub }),
