@@ -1,5 +1,5 @@
-import apollo from 'apollo-server';
-import { pubsub } from '../server.js';
+import apollo from 'apollo-server-express';
+import { pubsub } from '../sub.js';
 import { calculateDewPoint } from '../utils/calculations.js';
 
 export const typeDef = apollo.gql`
@@ -30,23 +30,23 @@ const enrichRecord = (record) =>
 
 export const resolvers = {
   Query: {
-    records: async (parent, args, { models }, info) => {
+    records: async (parent, args, { models }) => {
       const records = await models.record.all();
       return records.map(enrichRecord);
     },
-    recordsForDevice: async (parent, args, { models }, info) => {
+    recordsForDevice: async (parent, args, { models }) => {
       const records = await models.record.findByDeviceId(args);
       return records.map(enrichRecord);
     },
   },
   Mutation: {
-    createRecord: async (parent, args, { models, pubsub }, info) => {
+    createRecord: async (parent, args, { models }) => {
       const [record] = await models.record.insert(args).returning('*');
       const enrichedRecord = enrichRecord(record);
       pubsub.publish('NEW_RECORD', { newRecord: enrichedRecord });
       return enrichedRecord;
     },
-    deleteRecordsForDevice: async (parent, args, { models }, info) => {
+    deleteRecordsForDevice: async (parent, args, { models }) => {
       await models.record.deleteByDeviceId(args);
       return args.id;
     },

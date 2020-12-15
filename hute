@@ -8,11 +8,44 @@ function info() {
 function wellDone() {
   echo -e "\033[0;32m == Done == \033[0m"
 }
+function fail() {
+  echo -e "\033[0;31m == ERROR == \n $1 \033[0m"
+  exit 1
+}
+
+function publishCIBase() {
+  info "Build image"
+  docker build --tag hute/ci-base:latest --file Dockerfile.ci-base .
+  info "Push image to docker hub"
+  docker push hute/ci-base:latest
+  wellDone 
+}
+
+function checkRequirements () {
+  regex="^(Python 3.*)"
+  if [[ ! $(python -V 2>&1) =~ $regex ]]; then fail "Python version needs to be 3.x"; fi
+}
 
 function start() {
   ansible-playbook infrastructure/local/start-db.yml
   info "Run migrations"
   yarn run-migrations
+  wellDone
+}
+
+function startTest() {
+  if [[ "$*" == *--ci* ]]
+  then
+    info "Install dependencies"
+    yarn 
+  fi
+  info "Ensure test db is running"
+  ansible-playbook infrastructure/local/start-test-db.yml
+  docker ps -a
+  info "Run migrations"
+  yarn --cwd server run-migrations-test
+  info "Run tests"
+  yarn --cwd server test
   wellDone
 }
 
@@ -39,8 +72,15 @@ function deployLocal() {
 while [ $# -gt 0 ]; do
   arg=$1
   case $arg in
+    publish-cibase)
+      publishCIBase
+    ;;
     start)
       start
+    ;;
+    start-test)
+      shift
+      startTest "$@"
     ;;
     reset)
       reset

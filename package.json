@@ -16,17 +16,17 @@
     "test-server": "yarn --cwd server test",
     "run-migrations": "yarn --cwd server run-migrations && yarn --cwd server run-migrations-test",
     "lint": "eslint --max-warnings 0 --format friendly .",
-    "lint:fix": "prettier-eslint --write $(pwd)'/**/*.js'",
+    "format": "prettier --write $(pwd)'/**/*.{js,svelte}'",
+    "lint:fix": "prettier-eslint --write $(pwd)'/**/*.{js,svelte}'",
     "lint:staged": "lint-staged"
   },
   "lint-staged": {
-    "*.js": [
-      "yarn lint:fix",
-      "git add"
+    "*.{js,svelte}": [
+      "yarn lint",
+      "yarn lint:fix"
     ],
     "*.sql": [
-      "node scripts/sql-formatter.js",
-      "git add"
+      "node scripts/sql-formatter.js"
     ]
   },
   "dependencies": {
@@ -41,11 +41,12 @@
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-svelte3": "^2.7.3",
     "husky": "^5.0.0",
     "lint-staged": "^10.5.1",
     "prettier": "^2.1.2",
     "prettier-eslint": "^11.0.0",
     "prettier-eslint-cli": "^5.0.0",
-    "prettier-plugin-svelte": "^1.4.1"
+    "prettier-plugin-svelte": "^1.4.2"
   }
 }

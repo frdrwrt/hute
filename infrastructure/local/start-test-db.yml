@@ -1,0 +1,22 @@
+---
+- name: start test db
+  hosts: localhost
+
+  tasks:
+    - name: Setup network
+      docker_network:
+        name: hute-net
+        state: "{{ hute_net_state | default('present') }}"
+
+    - name: Ensure dbs are running
+      include_tasks: ../tasks/db.yml
+      loop:
+        - {
+            name: 'hute-db-test',
+            port: '25433',
+            db: 'hute',
+            user: 'hute',
+            password: 'hute',
+            data_store: 'hute-db-test-datastore',
+            init_sql: '../../scripts/init.sql',
+          }
