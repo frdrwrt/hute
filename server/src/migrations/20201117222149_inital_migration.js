@@ -31,3 +31,4 @@ export const up = async (knex) => {
 
   await knex.schema.raw("SELECT create_hypertable('records', 'time');");
 };
+export const down = () => {};

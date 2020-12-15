@@ -3,8 +3,6 @@
 name: Test feature branch
 
 on:
-  # push:
-    # branches-ignore: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -20,6 +18,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install dependencies
         run: yarn
+      - name: Build dependencies
+        run: yarn --cwd app build
       - name: Run linter
         run: yarn lint
       - name: Run formatter
