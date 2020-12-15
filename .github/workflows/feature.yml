@@ -118,5 +118,7 @@ jobs:
         uses: webfactory/ssh-agent@v0.4.1
         with: 
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Check ssh connection
+        run: ssh -q hute@116.203.108.246 -p 44 exit
       - name: Deploy production
         run: ./hute deploy-production
