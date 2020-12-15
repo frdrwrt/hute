@@ -119,5 +119,8 @@ jobs:
         with:
           filepath: ~/.ssh/hute/id_rsa
           content: ${{ secrets.SSH_PRIVATE_KEY }}
+          mode: 0644
+      - name: run 
+        run: cat ~/.ssh/hute/id_rsa
       - name: Deploy production
         run: ./hute deploy-production
