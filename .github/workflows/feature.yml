@@ -105,9 +105,9 @@ jobs:
   #         tags: hute/hute-server:latest
 
   deploy:
-    needs: 
-      - build-server
-      - build-app
+    # needs: 
+      # - build-server
+      # - build-app
     runs-on: ubuntu-latest
     container:
       image: hute/ci-base:latest
