@@ -1,0 +1,25 @@
+
+name: Codestyle
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs: 
+  codestyle:
+    runs-on: ubuntu-latest
+    container: 
+      image: hute/ci-base:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn
+      - name: Build dependencies
+        run: yarn --cwd app build
+      - name: Run linter
+        run: yarn lint
+      - name: Run formatter
+        run: yarn format
