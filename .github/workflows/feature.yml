@@ -115,12 +115,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Write to file
-        uses: frdrwrt/write-to-file@v1.2
+        uses: frdrwrt/write-to-file@v1.3
         with:
-          filepath: ~/.ssh/hute/id_rsa
+          filepath: /github/home/.ssh/hute/id_rsa
           content: ${{ secrets.SSH_PRIVATE_KEY }}
           mode: 0644
       - name: run 
-        run: cat ~/.ssh/hute/id_rsa
+        run: cat /github/home/.ssh/hute/id_rsa
       - name: Deploy production
         run: ./hute deploy-production
