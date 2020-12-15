@@ -114,9 +114,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: setup ssh
-        run: ssh-add ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Check ssh connection
-        run: ssh -q hute@116.203.108.246 -p 44 exit
+      - name: Write to file
+        uses: frdrwrt/write-to-file@v1.2
+        with:
+          filepath: ~/.ssh/hute/id_rsa
+          content: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Deploy production
         run: ./hute deploy-production
