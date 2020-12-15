@@ -114,12 +114,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Write to file
-        uses: frdrwrt/write-to-file@v1.3
-        with:
-          filepath: /github/home/.ssh/hute/id_rsa
-          content: ${{ secrets.SSH_PRIVATE_KEY }}
-          mode: 0644
+      - name: Setup ssh connection
+        uses: webfactory/ssh-agent@v0.4.1
+        with: 
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      # - name: Write to file
+        # uses: frdrwrt/write-to-file@v1.3
+        # with:
+          # filepath: /github/home/.ssh/hute/id_rsa
+          # content: ${{ secrets.SSH_PRIVATE_KEY }}
+          # mode: 0644
       - name: run 
         run: cat /github/home/.ssh/hute/id_rsa
       - name: Deploy production
