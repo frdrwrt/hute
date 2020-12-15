@@ -1,31 +1,43 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
+    <meta name="theme-color" content="#262626">
 
-	%sapper.base%
+    %sapper.base%
 
-	<link rel="manifest" href="manifest.json" crossorigin="use-credentials">
-	<link rel="icon" type="image/png" href="favicon.png">
+    <link rel="manifest" href="manifest.json" crossorigin="use-credentials" />
+    <link rel="icon" type="image/png" href="favicon.png" />
 
-	<!-- Sapper creates a <script> tag containing `src/client.js`
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/logo-48.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/logo-128.png" />
+    <link rel="icon" type="image/png" sizes="144x144" href="/logo-144.png" />
+    <link rel="icon" type="image/png" sizes="152x152" href="/logo-152.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/logo-192.png" />
+    <link rel="icon" type="image/png" sizes="256x256" href="/logo-256.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/logo-512.png" />
+    <link rel="apple-touch-icon" href="/logo-192-square.png" />
+    <meta name="msapplication-TileImage" sizes="144x144" href="/logo-144.png" />
+
+    <!-- Sapper creates a <script> tag containing `src/client.js`
 	     and anything else it needs to hydrate the app and
 	     initialise the router -->
-	%sapper.scripts%
+    %sapper.scripts%
 
-	<!-- Sapper generates a <style> tag containing critical CSS
+    <!-- Sapper generates a <style> tag containing critical CSS
 	     for the current page. CSS for the rest of the app is
 	     lazily loaded when it precaches secondary pages -->
-	%sapper.styles%
+    %sapper.styles%
 
-	<!-- This contains the contents of the <svelte:head> component, if
+    <!-- This contains the contents of the <svelte:head> component, if
 	     the current page has one -->
-	%sapper.head%
-</head>
-<body>
-	<!-- The application will be rendered inside this element,
+    %sapper.head%
+  </head>
+  <body>
+    <!-- The application will be rendered inside this element,
 	     because `src/client.js` references it -->
-	<div id="sapper">%sapper.html%</div>
-</body>
+    <div id="sapper">%sapper.html%</div>
+  </body>
 </html>

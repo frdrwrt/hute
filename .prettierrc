@@ -4,9 +4,5 @@
   "printWidth": 120,
   "singleQuote": true,
   "trailingComma": "all",
-  "svelteSortOrder": "styles-scripts-markup",
-  "svelteStrictMode": true,
-  "svelteBracketNewLine": true,
-  "svelteAllowShorthand": false,
-  "svelteIndentScriptAndStyle": false
+  "plugins": ["prettier-plugin-svelte"]
 }

@@ -1,10 +1,4 @@
 ---
-- name: 'Copy {{ item.name }} image to remote'
-  copy:
-    src: '../production/build'
-    dest: '/home/hute/'
-  when: not local
-
 - name: 'Check if {{ item.name }} is running'
   docker_container_info:
     name: '{{ item.name }}'
@@ -17,35 +11,16 @@
     container_default_behavior: 'compatibility'
   when: 'container_state.exists'
 
-- name: 'Remove old image'
+- name: 'Pull image'
   docker_image:
-    name: 'hute/{{ item.name }}:latest'
-    state: absent
-
-- name: 'Build image on remote'
-  docker_image:
-    name: 'hute/{{ item.name }}:latest'
-    load_path: '/home/hute/build/{{ item.name }}.tar' # build image from archive
-    source: load
-    force_source: yes
+    name: "{{ item.image }}"
+    source: pull
     state: present
-  when: not local
-
-- name: 'Build image local'
-  docker_image:
-    name: 'hute/{{ item.name }}:latest'
-    build:
-      pull: no
-      dockerfile: '{{ item.dockerfile }}'
-      path: '../..'
-    source: build
-    state: present
-  when: local
 
 - name: 'Run container'
   docker_container:
     name: '{{ item.name }}'
-    image: 'hute/{{ item.name }}:latest'
+    image: '{{ item.image }}'
     networks_cli_compatible: true
     network_mode: default
     networks:

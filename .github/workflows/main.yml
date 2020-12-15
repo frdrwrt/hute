@@ -1,36 +1,120 @@
-# This is a basic workflow to help you get started with Actions
+name: Build and deploy to production
 
-name: CI
-
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+jobs: 
+  codestyle:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    container: 
+      image: hute/ci-base:latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn
+      - name: Build dependencies
+        run: yarn --cwd app build
+      - name: Run linter
+        run: yarn lint
+      - name: Run formatter
+        run: yarn format
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+  test-server:
+    runs-on: ubuntu-latest
+    container:
+      image: hute/ci-base:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn
+      - name: Ensure test db is running
+        run: ansible-playbook infrastructure/local/start-test-db.yml
+      - name: show containers
+        run: docker ps -a
+      - name: show networks
+        run: docker network ls
+      - name: connect to network
+        run: docker network connect hute-net ${{ job.container.id }}
+      - name: restart
+        run: docker container start hute-db-test
+      - name: show network of job
+        run: docker network inspect hute-net
+      - name: show containers
+        run: docker ps -a
+      - name: logs hute-db
+        run: docker logs hute-db-test
+      - name: show ip
+        run: docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' hute-db-test
+      - name: Run migrations
+        run: yarn --cwd server run-migrations-testci
+      - name: Run tests
+        run: yarn --cwd server testci
+    
+  build-app:
+    needs:
+      - codestyle
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Docker build context 
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to docker hub
+        uses: docker/login-action@v1
+        with: 
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build server image and push to docker hub
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          file: ./Dockerfile.app
+          tags: hute/hute-app:latest
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+  build-server:
+    needs: 
+      - test-server
+      - codestyle
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Docker build context 
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to docker hub
+        uses: docker/login-action@v1
+        with: 
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build server image and push to docker hub
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          file: ./Dockerfile.server
+          tags: hute/hute-server:latest
+
+  deploy:
+    needs: 
+      - build-server
+      - build-app
+    runs-on: ubuntu-latest
+    container:
+      image: hute/ci-base:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup ssh connection
+        uses: webfactory/ssh-agent@v0.4.1
+        with: 
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Deploy production
+        run: ./hute deploy-production

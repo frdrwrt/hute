@@ -7,14 +7,6 @@ public
 dist
 build
 .cache/
-.pnp.js
 .yarn
 .vscode
 
-# in order for some dynamic fixtures to work with cypress, we need to export them without a semicolon
-libs/js/lib-browser-tests/fixtures/**/*.js
-apps/bot-dashboard
-
-# for bot-framework
-mid.bundle.js
-target

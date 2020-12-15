@@ -6,6 +6,7 @@ import hasData from './hasData';
 
 export const integration = () => {
   const Tester = {};
+
   const testClient = createTestClient(apolloServer);
 
   Object.assign(Tester, testClient);
