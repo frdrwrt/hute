@@ -114,10 +114,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Setup ssh connection
-        uses: webfactory/ssh-agent@v0.4.1
-        with: 
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: setup ssh
+        run: ssh-add ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Check ssh connection
         run: ssh -q hute@116.203.108.246 -p 44 exit
       - name: Deploy production
