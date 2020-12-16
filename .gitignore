@@ -9,7 +9,8 @@ node_modules/
 build 
 
 # app
-*.DS_Store*
+.DS_Store
+*/.DS_Store
 *__sapper__*
 
 # device
