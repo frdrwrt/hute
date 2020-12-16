@@ -10,7 +10,7 @@
 <img src="https://github.com/frdrwrt/hute/workflows/Build%20and%20deploy/badge.svg">  
 </p>
 
-[**HUTE**](https://hute.info) is a project to track wheather data over the past. It provides a graphql api to send the data recorded by a device of your choice. A progressive web app let you comfortable check your records from everywhere. Further this project will collect informations from the commuinty about how to build your own device and connect it with the application.
+[**HUTE**](https://hute.info) is a project to track weather data. It provides a graphql api. It is possible to send data recorded by a device of your choice. A progressive web app lets you comfortable check your records from anywhere. Further this project will collect informations from the commuinty about how to build your own device and connect it with the application.
 <p align="center">
 <img src="/assets/screenshot.png?sanitize=true" height="400">  
 </p>
