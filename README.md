@@ -11,6 +11,12 @@
 </p>
 
 **HUTE** is a project for use
+<p align="center">
+<img src="/assets/screenshot.png?sanitize=true" height="400">  
+</p>
+
+Have a look on https://hute.info.
+It is also possible to access the graphql api under https://hute.info/graphql.
 
 ## Contributions are welcome!
 
@@ -27,8 +33,8 @@ After cloning the repository you can start app and server either by
     ./hute start            # start complete stack
     ./hute start db         # start db 
     ./hute start db-test    # start db-test
-    ./hute start app        # start db-test
-    ./hute start server     # start db-test
+    ./hute start app        # start app
+    ./hute start server     # start server
 ```
 The same way you can stop the stack or parts of it with `./hute stop`.
 
@@ -53,7 +59,7 @@ After db-test is running you can run tests
 ```
     cd server && yarn test
 ```
-after stack is running you can access 
+after the stack is running you can access 
 - App: http://localhost:3000/
 - Graphql Playground: http://localhost:4000/graphql
 - DB: PORT 25432
