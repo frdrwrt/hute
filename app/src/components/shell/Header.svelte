@@ -1,6 +1,8 @@
 <script>
-  import { Header, HeaderUtilities, HeaderGlobalAction, SkipToContent } from 'carbon-components-svelte';
-  import UserAvatar20 from 'carbon-icons-svelte/lib/UserAvatar20';
+  import { Header, HeaderUtilities, SkipToContent, HeaderActionLink } from 'carbon-components-svelte';
+
+  /* eslint import/no-unresolved: "off" */
+  import LogoGitHub20 from 'carbon-icons-svelte/lib/LogoGitHub20';
 
   export let isSideNavOpen;
 </script>
@@ -10,6 +12,6 @@
     <SkipToContent />
   </div>
   <HeaderUtilities>
-    <HeaderGlobalAction aria-label="User Avatar" icon={UserAvatar20} />
+    <HeaderActionLink aria-label="GitHub" icon={LogoGitHub20} href="https://github.com/frdrwrt/hute" />
   </HeaderUtilities>
 </Header>

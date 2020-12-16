@@ -21,7 +21,9 @@
         published_ports:
           - "{{ nginx_port_http | default('80') }}:80"
           - "{{ nginx_port_https | default('443') }}:443"
-  when: local and not nginx_state.exists
+  when: 
+    - local is defined
+    - not nginx_state.exists
 
 - name: Start nginx with certbot
   block:
@@ -29,7 +31,7 @@
       docker_container:
         name: hute-nginx
         image: staticfloat/nginx-certbot:latest
-        # restart_policy: unless-stopped
+        restart_policy: unless-stopped
         volumes:
           - '{{ nginx_conf }}:/etc/nginx/user.conf.d/default.conf:ro'
           - /home/hute/letsencrypt:/etc/letsencrypt
@@ -43,4 +45,6 @@
           - "{{ nginx_port_https | default('443') }}:443"
         env:
           CERTBOT_EMAIL: '{{ certbot_email }}'
-  when: not local and not nginx_state.exists
+  when:
+    - local is undefined 
+    - not nginx_state.exists

@@ -1,10 +1,11 @@
 ---
-- name: Setup volumes for hute
+- name: Ensure volumes for {{ item.name}} exists
   docker_volume:
     name: '{{ item.data_store }}' # required. Name of the volume to operate on.
-    state: "{{ datastore_state | default('present') }}" # not required. choices: absent;present. C(absent) deletes the volume.,C(present) creates the volume, if it does not already exist.
+    state: present # not required. choices: absent;present. C(absent) deletes the volume.,C(present) creates the volume, if it does not already exist.
+  when: item.state != "absent"
 
-- name: 'Check if {{ item.name }} is already running'
+- name: 'Check if {{ item.name }} exists'
   docker_container_info:
     name: '{{ item.name }}'
   register: db_state
@@ -14,6 +15,7 @@
     - name: 'Start {{ item.name }}'
       docker_container:
         name: '{{ item.name }}'
+        state: "{{ item.state }}"
         image: timescale/timescaledb:1.7.4-pg12
         volumes:
           - '{{ item.data_store }}:/var/lib/postgresql/data'
@@ -32,26 +34,14 @@
           POSTGRES_PASSWORD: '{{ item.password }}'
       register: db_register
 
-    - name: Get infos about container
-      docker_container_info: 
-        name: "{{ item.name }}"
-      register: container_info
-
-    - name: Print infos about container
-      debug:
-        var: container_info.container.NetworkSettings.IPAddress
-      when: container_info.exists
-
-    - name: Print infos about container
-      debug:
-        var: db_register
-
-    # - name: 'Wait for {{ item.name }} to accept connections'
-      # shell: "pg_isready -d {{ item.db }} -p {{ item.port }} -h localhost"
-      # register: db_running
-      # until: db_running.rc == 0
-      # retries: 10
-      # delay: 3
+    - name: 'Wait for {{ item.name }} to accept connections'
+      shell: "pg_isready -d {{ item.db }} -p {{ item.port }} -h localhost"
+      register: db_running
+      until: db_running.rc == 0
+      retries: 10
+      delay: 3
+      ignore_errors: yes
+      when: item.state == 'started'
   when: not db_state.exists
 
 - name: Ensure state of db container
@@ -59,3 +49,9 @@
     name: '{{ item.name }}'
     state: "{{ item.state | default('started') }}"
     container_default_behavior: 'compatibility'
+
+- name: Remove volumes for {{ item.name }}
+  docker_volume:
+    name: '{{ item.data_store }}'
+    state: absent
+  when: item.state == "absent"
