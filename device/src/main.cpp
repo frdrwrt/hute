@@ -22,10 +22,10 @@ U8G2LOG u8g2log;
 DHT dht(DHTPIN, DHTTYPE);
 HTTPClient http;
 
-const char *ssid = "BND";
-const char *password = "SafetyFirst";
+const char *ssid = "?YOUR WLAN NAME?";
+const char *password = "?YOUR WLAN PASSWORD?";
 const char *serverUrl = "https://hute.info/graphql";
-const char *deviceId = "6d87aaee-adc0-4d71-9c13-a3b6496c0fc5";
+const char *deviceId = "?DEVICE ID?";
 const char *root_ca =
     "-----BEGIN CERTIFICATE-----\n"
     "MIIDSjCCAjKgAwIBAgIQRK+wgNajJ7qJMDmGLvhAazANBgkqhkiG9w0BAQUFADA/\n"
@@ -47,8 +47,6 @@ const char *root_ca =
     "JDGFoqgCWjBH4d1QB7wCCZAA62RjYJsWvIjJEubSfZGL+T0yjWW06XyxV3bqxbYo\n"
     "Ob8VZRzI9neWagqNdwvYkQsEjgfbKbYK7p2CNTUQ\n"
     "-----END CERTIFICATE-----\n";
-
-
 
 void print(String text) {
   u8g2log.print(text);
@@ -84,64 +82,64 @@ void loop() {
 
   if(isnan(humidity) || isnan(temperature)) {
     print(F("Failed to read from DHT sensor\n"));
-  }
-
-  print(F("Humidity: "));
-  print(humidity);
-  print(F("%\n"));
-  print(F("Temperature: "));
-  print(temperature);
-  print(F("°C\n"));
-
-
-  print("Connecting to: ");
-  print(ssid);
-  print("\n");
-
-  while (WiFi.status() != WL_CONNECTED) {
-    WiFi.begin(ssid, password);
-    delay(1000);
-    print(".");
-  }
-  print("WiFi connected! \n");
-  print("IP address: \n");
-  print(WiFi.localIP());
-  print("\n");
-  WiFi.mode(WIFI_STA);
-
-  print("\n");
-
-  print("Start request to: ");
-  print(serverUrl);
-  print("\n");
-  http.begin(serverUrl);
-
-  http.addHeader("Content-Type", "application/json");
-  http.addHeader("Accept", "application/json");
-  http.addHeader("Connection", "keep-alive");
-  http.addHeader("Origin", "Origin: https://hute.info");
-
-  char query [256]; // how do we know the buffer size we need?
-  sprintf(query, "{\"query\":\"mutation {createRecord(deviceId: \\\"%s\\\" temperature: %.2f humidity: %.2f){time}}\"}", deviceId, temperature, humidity);
-
-  print("\n");
-  print("Query: \n");
-  print(query);
-  print("\n\n");
-
-  int statusCode = http.POST(query);
-
-  if (statusCode == HTTP_CODE_OK) {
-    print("Request successfull!\n");
-    String payload = http.getString();
-    print(payload);
   } else {
-    print("Cannot send data, status code:");
-    print(statusCode);
-  }
+    print(F("Humidity: "));
+    print(humidity);
+    print(F("%\n"));
+    print(F("Temperature: "));
+    print(temperature);
+    print(F("°C\n"));
 
-  http.end();
-  WiFi.disconnect();
+
+    print("Connecting to: ");
+    print(ssid);
+    print("\n");
+
+    while (WiFi.status() != WL_CONNECTED) {
+      WiFi.begin(ssid, password);
+      delay(1000);
+      print(".");
+    }
+    print("WiFi connected! \n");
+    print("IP address: \n");
+    print(WiFi.localIP());
+    print("\n");
+    WiFi.mode(WIFI_STA);
+
+    print("\n");
+
+    print("Start request to: ");
+    print(serverUrl);
+    print("\n");
+    http.begin(serverUrl);
+
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("Accept", "application/json");
+    http.addHeader("Connection", "keep-alive");
+    http.addHeader("Origin", "Origin: https://hute.info");
+
+    char query [256]; // how do we know the buffer size we need?
+    sprintf(query, "{\"query\":\"mutation {createRecord(deviceId: \\\"%s\\\" temperature: %.2f humidity: %.2f){time}}\"}", deviceId, temperature, humidity);
+
+    print("\n");
+    print("Query: \n");
+    print(query);
+    print("\n\n");
+
+    int statusCode = http.POST(query);
+
+    if (statusCode == HTTP_CODE_OK) {
+      print("Request successfull!\n");
+      String payload = http.getString();
+      print(payload);
+    } else {
+      print("Cannot send data, status code:");
+      print(statusCode);
+    }
+
+    http.end();
+    WiFi.disconnect();
+  }
 
   print("\n");
   print("=> SLEEP!\n");
