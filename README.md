@@ -19,11 +19,11 @@ Have a look on https://hute.info. </br>
 It is also possible to access the graphql api under https://hute.info/graphql.
 
 ## Contributions are welcome!
-If you have an idea about what feature would make hute even better, feel free to create an issue or even help to make your feature become realtiy. 
+If you have an idea about what feature would make hute even better, feel free to create an issue or even help to make your feature become reality. 
 
 ### Local development
 
-To get this project up and running on your local machine, you need to following requirements:
+To get this project up and running on your local machine, you need the following requirements:
  - [node 14](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-debian-10)
  - [yarn2](https://yarnpkg.com/getting-started/install)
  - [docker](https://docs.docker.com/engine/install/)
@@ -46,23 +46,26 @@ First you need to install the dependencies with a simple
 ```
     yarn
 ```
-After you 
+Next you need to start the DB.
 ```
     ./hute start db
 ```
+You can than excess either app or server directory and start it in development mode. Which includes a livereload on code changes.
 ```
     cd app && yarn dev    
     cd server && yarn dev 
 ```
+</br>
 To run tests you need to start the test db first
 ```
     ./hute start db-test
 ```
-After db-test is running you can run tests
+We use jest test framework which can be started like this:
 ```
     cd server && yarn test
 ```
-after the stack is running you can access 
+Stack can be accessed on the following ports/urls
+
 - App: http://localhost:3000/
 - Graphql Playground: http://localhost:4000/graphql
 - DB: PORT 25432
