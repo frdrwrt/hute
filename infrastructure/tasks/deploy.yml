@@ -16,6 +16,7 @@
     name: "{{ item.image }}"
     source: pull
     state: present
+    force_source: yes
   when:
     - local is undefined 
     - item.state != 'absent'
@@ -25,6 +26,7 @@
     name: "{{ item.image }}"
     state: present
     source: build
+    force_source: yes
     build:
       dockerfile: "{{ item.dockerfile }}"
       path: "../.."

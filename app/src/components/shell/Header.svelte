@@ -1,10 +1,13 @@
 <script>
-  import { Header, HeaderUtilities, SkipToContent, HeaderActionLink } from 'carbon-components-svelte';
+  import { Header, HeaderUtilities, SkipToContent, HeaderGlobalAction } from 'carbon-components-svelte';
+  import LogoGithub20 from 'carbon-icons-svelte/lib/LogoGithub20';
 
-  /* eslint import/no-unresolved: "off" */
-  import LogoGitHub20 from 'carbon-icons-svelte/lib/LogoGitHub20';
+  import { goto } from '@sapper/app';
 
   export let isSideNavOpen;
+  const handleGithub = async () => {
+    await goto('https://github.com/frdrwrt/hute');
+  };
 </script>
 
 <Header company="HUTE" platformName="Track your conditions" href="/" bind:isSideNavOpen>
@@ -12,6 +15,6 @@
     <SkipToContent />
   </div>
   <HeaderUtilities>
-    <HeaderActionLink aria-label="GitHub" icon={LogoGitHub20} href="https://github.com/frdrwrt/hute" />
+    <HeaderGlobalAction icon={LogoGithub20} on:click={handleGithub} />
   </HeaderUtilities>
 </Header>

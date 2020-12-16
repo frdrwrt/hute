@@ -15,13 +15,13 @@
 <img src="/assets/screenshot.png?sanitize=true" height="400">  
 </p>
 
-Have a look on https://hute.info.
+Have a look on https://hute.info. </br>
 It is also possible to access the graphql api under https://hute.info/graphql.
 
 ## Contributions are welcome!
 If you have an idea about what feature would make hute even better, feel free to create an issue or even help to make your feature become realtiy. 
 
-###Local development
+### Local development
 
 To get this project up and running on your local machine, you need to following requirements:
  - [node 14](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-debian-10)

@@ -18,7 +18,7 @@
 
 <Grid>
   {#if $devices.loading}
-    <Loading />
+    <Loading withOverlay={false} small style="margin: auto;" />
   {:else if $devices.error}
     ERROR:
     {$devices.error.message}
