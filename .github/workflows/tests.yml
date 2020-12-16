@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Ensure test db is running
-        run: ansible-playbook infrastructure/local/start-test-db.yml
+        run: ./hute start db-test
       - name: connect to network
         run: docker network connect hute-net ${{ job.container.id }}
       - name: restart

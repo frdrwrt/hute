@@ -26,72 +26,100 @@ function checkRequirements () {
   if [[ ! $(python -V 2>&1) =~ $regex ]]; then fail "Python version needs to be 3.x"; fi
 }
 
-function start() {
-  if [ -z ${var+x} ]
+function migration() {
+  info "Run migrations"
+  if [ -z ${1+x} ]
   then
-    echo "Start all"
+      yarn --cwd server run-migrations
+      yarn --cwd server run-migrations-test
   else
-    case $arg in
-      app)
+    case $1 in
+    dev)
+      yarn --cwd server run-migrations
+    ;;
+    prod)
+      yarn --cwd server run-migrations-prod
+    ;;
+    test)
+      yarn --cwd server run-migrations-test
+    ;;
+    testci)
+      yarn --cwd server run-migrations-testci
+    ;;
+    create)
+      yarn --cwd server create-migration
+    ;;
+    *)
+    fail "Command $arg not found"
+    esac
+  fi
+  wellDone
+}
 
+function start() {
+  info "START"
+  if [ -z ${1+x} ]
+  then
+    ansible-playbook infrastructure/local/docker-state.yml --extra-vars "state=started"
+    migration
+  else
+    case $1 in
+      app)
+        ansible-playbook infrastructure/local/docker-state.yml --extra-vars "container=app state=started"
       ;;
       server)
-
+        ansible-playbook infrastructure/local/docker-state.yml --extra-vars "container=server state=started"
       ;;
       db)
-
+        ansible-playbook infrastructure/local/docker-state.yml --extra-vars "container=db state=started"
+        migration dev
       ;;
       db-test)
-
+        ansible-playbook infrastructure/local/docker-state.yml --extra-vars "container=db-test state=started"
+        migration test
       ;;
       *)
       fail "Command $arg not found"
     esac
   fi
-
-  ansible-playbook infrastructure/local/start-db.yml
-  info "Run migrations"
-  yarn run-migrations
   wellDone
 }
 
-function startTest() {
-  if [[ "$*" == *--ci* ]]
+function stop() {
+  info "STOP"
+  if [ -z ${1+x} ]
   then
-    info "Install dependencies"
-    yarn 
+    ansible-playbook infrastructure/local/docker-state.yml --extra-vars "state=absent"
+  else
+    case $1 in
+      app)
+        ansible-playbook infrastructure/local/docker-state.yml --extra-vars "container=app state=absent"
+      ;;
+      server)
+        ansible-playbook infrastructure/local/docker-state.yml --extra-vars "container=server state=absent"
+      ;;
+      db)
+        ansible-playbook infrastructure/local/docker-state.yml --extra-vars "container=db state=absent"
+      ;;
+      db-test)
+        ansible-playbook infrastructure/local/docker-state.yml --extra-vars "container=db-test state=absent"
+      ;;
+      *)
+      fail "Command $arg not found"
+    esac
   fi
-  info "Ensure test db is running"
-  ansible-playbook infrastructure/local/start-test-db.yml
-  docker ps -a
-  info "Run migrations"
-  yarn --cwd server run-migrations-test
-  info "Run tests"
-  yarn --cwd server test
-  wellDone
-}
-
-function reset() {
-  ansible-playbook infrastructure/local/reset-db.yml
-  info "Run migrations"
-  yarn run-migrations
   wellDone
 }
 
 function seed() {
+  info "Apply seed to db"
   yarn --cwd server run-seeds
+  wellDone
 }
 
 while [ $# -gt 0 ]; do
   arg=$1
   case $arg in
-    ci)
-      shift
-      ci "$@"
-    publish)
-      shift
-      publish "$@"
-    ;;
     start)
       shift
       start "$@"
@@ -99,9 +127,6 @@ while [ $# -gt 0 ]; do
     stop)
       shift
       stop "$@"
-    ;;
-    reset)
-      reset
     ;;
     seed)
       seed

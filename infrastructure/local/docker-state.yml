@@ -1,0 +1,65 @@
+---
+- hosts: localhost
+
+  vars: 
+    local: yes
+
+  tasks:
+    - name: Setup network
+      docker_network:
+        name: hute-net
+        state: "{{ net_state | default('present') }}"
+
+    - name: "Ensure db is {{ state }}"
+      include_tasks: ../tasks/db.yml
+      loop:
+        - {
+            name: 'hute-db',
+            port: '25432',
+            db: 'hute',
+            user: 'hute',
+            password: 'hute',
+            data_store: 'hute-db-datastore',
+            state: "{{ state | default('present') }}"
+          }
+      when: container is undefined or container == "db"
+    
+    - name: "Ensure db-test is {{ state }}"
+      include_tasks: ../tasks/db.yml
+      loop:
+        - {
+            name: 'hute-db-test',
+            port: '25433',
+            db: 'hute',
+            user: 'hute',
+            password: 'hute',
+            data_store: 'hute-db-test-datastore',
+            state: "{{ state | default('present') }}"
+          }
+      when: container is undefined or container == "db-test"
+
+    - name: "Ensure app is {{ state }}"
+      include_tasks: ../tasks/deploy.yml
+      loop:
+        - { 
+            name: 'hute-app', 
+            dockerfile: 'Dockerfile.app', 
+            image: 'hute/hute-app:latest',
+            port_host: '3000', 
+            port_container: '3000', 
+            state: "{{ state | default('present') }}"
+          }
+      when: container is undefined or container == "app"
+        
+    - name: "Ensure server is {{ state }}"
+      include_tasks: ../tasks/deploy.yml
+      loop:
+        - { 
+            name: 'hute-server',
+            dockerfile: 'Dockerfile.server',
+            image: 'hute/hute-server:latest',
+            port_host: '4000',
+            port_container: '4000',
+            state: "{{ state | default('present') }}"
+          }
+      when: container is undefined or container == "server"

@@ -16,11 +16,28 @@
     name: "{{ item.image }}"
     source: pull
     state: present
+  when:
+    - local is undefined 
+    - item.state != 'absent'
 
-- name: 'Run container'
+- name: 'Build image'
+  docker_image:
+    name: "{{ item.image }}"
+    state: present
+    source: build
+    build:
+      dockerfile: "{{ item.dockerfile }}"
+      path: "../.."
+      pull: no
+  when: 
+    - local is defined 
+    - item.state != 'absent'
+
+- name: 'Ensure {{ item.name }} is {{ item.state }}'
   docker_container:
     name: '{{ item.name }}'
     image: '{{ item.image }}'
+    state: "{{ item.state }}"
     networks_cli_compatible: true
     network_mode: default
     networks:
@@ -28,9 +45,4 @@
     container_default_behavior: 'compatibility'
     published_ports:
       - '{{ item.port_host }}:{{ item.port_container }}'
-
-- name: 'Ensure container is running'
-  docker_container:
-    name: '{{ item.name }}'
-    state: "{{ item.state | default('started') }}"
-    container_default_behavior: 'compatibility'
+  when: item.state != 'absent'

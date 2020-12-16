@@ -1,7 +1,7 @@
 ---
 - hosts: server
+
   vars:
-    - local: no
     - nginx_conf: '/home/hute/nginx.conf'
     - certbot_email: webmaster@hute.info
 
@@ -29,13 +29,28 @@
             password: 'hute',
             data_store: 'hute-db-datastore',
             init_sql: '/home/hute/init.sql',
+            state: 'started',
           }
 
     - name: Deploy server
       include_tasks: ../tasks/deploy.yml
       loop:
-        - { name: 'hute-app', image: 'hute/hute-app:latest', port_host: '3000', port_container: '3000' }
-        - { name: 'hute-server', image: 'hute/hute-server:latest', port_host: '4000', port_container: '4000' }
+        - { 
+            name: 'hute-app', 
+            dockerfile: 'Dockerfile.app', 
+            image: 'hute/hute-app:latest', 
+            port_host: '3000', 
+            port_container: '3000',
+            state: started
+          }
+        - { 
+            name: 'hute-server',
+            dockerfile: 'Dockerfile.server',
+            image: 'hute/hute-server:latest',
+            port_host: '4000',
+            port_container: '4000',
+            state: started 
+          }
 
     - name: Ensure nginx is running
       include_tasks: ../tasks/nginx.yml

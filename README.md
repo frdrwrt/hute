@@ -24,10 +24,13 @@ To get this project up and running on your local machine, you need to following 
 After cloning the repository you can start app and server either by 
 #### Docker mode
 ```
-    ./hute start server         # includes start of db
-    ./hute start app
-    ./hute start
+    ./hute start            # start complete stack
+    ./hute start db         # start db 
+    ./hute start db-test    # start db-test
+    ./hute start app        # start db-test
+    ./hute start server     # start db-test
 ```
+The same way you can stop the stack or parts of it with `./hute stop`.
 
 #### Dev mode
 First you need to install the dependencies with a simple 
@@ -66,7 +69,9 @@ To create your own seed files, checkout http://knexjs.org/#Seeds-API for more in
 #### Migrations
 To create and run migrations use the following commands:
 ```
-    ./hute migration            # run migrations
+    ./hute migration            # run migrations on db and db-test
+    ./hute migration dev        # run migrations on db
+    ./hute migration test       # run migrations on db-test
     ./hute migration create     # create a new migration file
 ```
 

@@ -29,7 +29,7 @@
       docker_container:
         name: hute-nginx
         image: staticfloat/nginx-certbot:latest
-        # restart_policy: unless-stopped
+        restart_policy: unless-stopped
         volumes:
           - '{{ nginx_conf }}:/etc/nginx/user.conf.d/default.conf:ro'
           - /home/hute/letsencrypt:/etc/letsencrypt
