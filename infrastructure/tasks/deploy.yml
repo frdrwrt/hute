@@ -32,7 +32,7 @@
       path: "../.."
       pull: no
   when: 
-    - local is undefined 
+    - local is defined 
     - item.state != 'absent'
 
 - name: 'Ensure {{ item.name }} is {{ item.state }}'
