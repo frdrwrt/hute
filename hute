@@ -27,6 +27,28 @@ function checkRequirements () {
 }
 
 function start() {
+  if [ -z ${var+x} ]
+  then
+    echo "Start all"
+  else
+    case $arg in
+      app)
+
+      ;;
+      server)
+
+      ;;
+      db)
+
+      ;;
+      db-test)
+
+      ;;
+      *)
+      fail "Command $arg not found"
+    esac
+  fi
+
   ansible-playbook infrastructure/local/start-db.yml
   info "Run migrations"
   yarn run-migrations
@@ -60,27 +82,23 @@ function seed() {
   yarn --cwd server run-seeds
 }
 
-function deployProduction() {
-  ansible-playbook -i infrastructure/production/inventory infrastructure/production/deploy.yml
-}
-
-function deployLocal() {
-  ansible-playbook infrastructure/local/deploy.yml
-}
-
-
 while [ $# -gt 0 ]; do
   arg=$1
   case $arg in
-    publish-cibase)
-      publishCIBase
+    ci)
+      shift
+      ci "$@"
+    publish)
+      shift
+      publish "$@"
     ;;
     start)
-      start
-    ;;
-    start-test)
       shift
-      startTest "$@"
+      start "$@"
+    ;;
+    stop)
+      shift
+      stop "$@"
     ;;
     reset)
       reset
@@ -88,14 +106,9 @@ while [ $# -gt 0 ]; do
     seed)
       seed
     ;;
-    deploy-production)
-      deployProduction
-    ;;
-    deploy-local)
-      deployLocal
-    ;;
-    shortlist)
-      echo option_1 option_2 shortlist
+    migration)
+      shift
+      migration "$@"
     ;;
     *)
      yarn "$@"
