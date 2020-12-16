@@ -10,7 +10,7 @@
 <img src="https://github.com/frdrwrt/hute/workflows/Build%20and%20deploy/badge.svg">  
 </p>
 
-**HUTE** is a project for use
+[**HUTE**](https://hute.info) is a project to track wheather data over the past. It provides a graphql api to send the data recorded by a device of your choice. A progressive web app let you comfortable check your records from everywhere. Further this project will collect informations from the commuinty about how to build your own device and connect it with the application.
 <p align="center">
 <img src="/assets/screenshot.png?sanitize=true" height="400">  
 </p>
@@ -19,6 +19,9 @@ Have a look on https://hute.info.
 It is also possible to access the graphql api under https://hute.info/graphql.
 
 ## Contributions are welcome!
+If you have an idea about what feature would make hute even better, feel free to create an issue or even help to make your feature become realtiy. 
+
+###Local development
 
 To get this project up and running on your local machine, you need to following requirements:
  - [node 14](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-debian-10)
