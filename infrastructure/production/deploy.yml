@@ -54,3 +54,9 @@
 
     - name: Ensure nginx is running
       include_tasks: ../tasks/nginx.yml
+
+    - name: Prune all unused images
+      docker_prune: 
+        containers: yes
+        images: yes
+      
