@@ -90,6 +90,8 @@ jobs:
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: remove .env.prod file
+        run: rm .env.prod
       - name: Create .env.prod file
         uses: SpicyPizza/create-envfile@v1
         with: 
