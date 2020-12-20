@@ -18,7 +18,7 @@
     state: present
     force_source: yes
   when:
-    - local is undefined 
+    - local is defined 
     - item.state != 'absent'
 
 - name: 'Build image'
@@ -32,7 +32,7 @@
       path: "../.."
       pull: no
   when: 
-    - local is defined 
+    - local is undefined 
     - item.state != 'absent'
 
 - name: 'Ensure {{ item.name }} is {{ item.state }}'
