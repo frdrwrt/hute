@@ -93,17 +93,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Replace localhost in .env.prod 
-        uses: bejoistic/str-replace@master
-        with: 
-          find: '/localhost:4000/'
-          replace: '/hute.info/'
-          include: '.env.prod'
+        run: sed -i -e 's|/localhost:4000/|/hute.info/|g' .env.prod
       - name: Replace DB_PASSWORD in .env.prod 
-        uses: bejoistic/str-replace@master
-        with: 
-          find: 'DB_PASSWORD=hute'
-          replace: 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}'
-          include: '.env.prod'
+        run: sed -i -e 's|DB_PASSWORD=hute|DB_PASSWORD=${{ secrets.DB_PASSWORD }}|g' .env.prod
       - name: Login to docker hub
         uses: docker/login-action@v1
         with: 
