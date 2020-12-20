@@ -102,9 +102,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build server image
-        run: docker build --tag hute/ci-base:latest --file Dockerfile.ci-base .
+        run: docker build --tag hute/hute-server:latest --file Dockerfile.server .
       - name: Push to docker hub
-        run: docker push hute/ci-base:latest 
+        run: docker push hute/hute-server:latest 
   # deploy:
   #   needs: 
   #     - build-server
