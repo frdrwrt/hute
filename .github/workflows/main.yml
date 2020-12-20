@@ -83,20 +83,20 @@ jobs:
   #         tags: hute/hute-app:latest
 
   build-server:
-    needs: 
-      - test-server
-      - codestyle
+    # needs: 
+      # - test-server
+      # - codestyle
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Replace localhost .env.prod file
+      - name: Replace localhost .env.prod 
         uses: bejoistic/str-replace@master
         with: 
-          find: '/localhost/'
+          find: '/localhost:4000/'
           replace: '/hute.info/'
           include: '.env.prod'
-      - name: 
+      - name: Replace DB_PASSWORD in .env.prod 
         uses: bejoistic/str-replace@master
         with: 
           find: 'DB_PASSWORD=hute'
