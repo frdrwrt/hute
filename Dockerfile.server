@@ -9,7 +9,6 @@ COPY ./server ./server
 COPY .env.prod .env.prod
 
 RUN yarn workspace server install --production
-RUN cat .env.prod
 
 WORKDIR /usr/src/server
 EXPOSE 4000

@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "dev": "dotenv -e ../.env -- nodemon node ./src/index.js",
-    "prod": "cat .env.prod && yarn run-migrations-prod && dotenv -e ../.env -c prod -- node ./src/index.js",
+    "prod": "yarn run-migrations-prod && dotenv -e ../.env -c prod -- node ./src/index.js",
     "test": "dotenv -e ../.env -c test -- node --experimental-vm-modules node_modules/.bin/jest",
     "testci": "dotenv -e ../.env -c testci -- node --experimental-vm-modules node_modules/.bin/jest",
     "create-migration": "dotenv -e ../.env -- yarn knex --esm --knexfile=./src/db.js migrate:make",
